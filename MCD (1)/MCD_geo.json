@@ -1,0 +1,47 @@
+{
+  "width": 703,
+  "height": 465,
+  "cx": [
+    [ "PLANIFIER", 254 ],
+    [ "MAINTENANCE", 380 ],
+    [ "IMPLIQUE", 254 ],
+    [ "PERSONNEL", 380 ],
+    [ "PARTICIPE", 501 ],
+    [ "PLATEFORME", 96 ],
+    [ "APPARTENIR", 254 ],
+    [ "CAMPAGNE", 380 ],
+    [ "ETRE_RATTACHE", 501 ],
+    [ "ECHANTILLON", 638 ],
+    [ "VALIDE", 254 ],
+    [ "BUDGET", 380 ]
+  ],
+  "cy": [
+    [ "PLANIFIER", 60 ],
+    [ "MAINTENANCE", 60 ],
+    [ "IMPLIQUE", 178 ],
+    [ "PERSONNEL", 178 ],
+    [ "PARTICIPE", 178 ],
+    [ "PLATEFORME", 296 ],
+    [ "APPARTENIR", 296 ],
+    [ "CAMPAGNE", 296 ],
+    [ "ETRE_RATTACHE", 296 ],
+    [ "ECHANTILLON", 296 ],
+    [ "VALIDE", 414 ],
+    [ "BUDGET", 414 ]
+  ],
+  "shift": [
+    [ "PLANIFIER,PLATEFORME,0", 0 ],
+    [ "PLANIFIER,MAINTENANCE,0", 0 ],
+    [ "IMPLIQUE,CAMPAGNE,0", 0 ],
+    [ "IMPLIQUE,PERSONNEL,0", 0 ],
+    [ "PARTICIPE,ECHANTILLON,0", 0 ],
+    [ "PARTICIPE,PERSONNEL,0", 0 ],
+    [ "APPARTENIR,PLATEFORME,0", 0 ],
+    [ "APPARTENIR,CAMPAGNE,0", 0 ],
+    [ "ETRE_RATTACHE,CAMPAGNE,0", 0 ],
+    [ "ETRE_RATTACHE,ECHANTILLON,0", 0 ],
+    [ "VALIDE,BUDGET,0", 0 ],
+    [ "VALIDE,CAMPAGNE,0", 0 ]
+  ],
+  "ratio": []
+}
