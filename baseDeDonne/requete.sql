@@ -1,5 +1,8 @@
--- Lister toutes les plateformes
-SELECT * FROM Plateforme;
+-- Coût total d'une campagne
+SELECT c.id AS campagne_id, c.lieu,
+       (c.duree * p.cout_journalier) AS cout_total
+FROM Campagne c
+JOIN Plateforme p ON c.plateforme_id = p.id;
 
 -- Lister tout le personnel
 SELECT * FROM Personnel;
