@@ -1,0 +1,16 @@
+%%mocodo
+Planifier, 0N Plateforme, 11 Maintenance
+Maintenance: idMaint, date_maintenance, duree, type_operation
+
+Plateforme: idPl, nom, nb_personnes_necessaires, cout_journalier, habilitations_requises, intervalle_maintenance
+Implique, 0N Campagne, 0N Personnel
+Personnel: idPers, nom, habilitations
+Participe, 0N Echantillon, 0N Personnel
+
+Appartenir, 0N Plateforme, 11 Campagne
+Campagne: idCamp, date_debut, duree, lieu
+Etre_rattache, 0N Campagne, 11 Echantillon
+Echantillon: idEch, fichier_sequence, commentaire
+
+Valide, 0N Budget, 0N Campagne
+Budget: idBudg, mois, montant
