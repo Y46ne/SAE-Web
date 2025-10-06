@@ -1,14 +1,14 @@
 -- Supprimer les relations
-DELETE FROM Valide;
-DELETE FROM Participe;
-DELETE FROM Implique;
+DROP TABLE Valide;
+DROP TABLE Participe;
+DROP TABLE Implique;
 
 -- Supprimer les entités dépendantes
-DELETE FROM Echantillon;
-DELETE FROM Maintenance;
-DELETE FROM Campagne;
+DROP TABLE Echantillon;
+DROP TABLE Maintenance;
+DROP TABLE Campagne;
 
 -- Supprimer les tables principales
-DELETE FROM Budget;
-DELETE FROM Personnel;
-DELETE FROM Plateforme;
+DROP TABLE Budget;
+DROP TABLE Personnel;
+DROP TABLE Plateforme;
