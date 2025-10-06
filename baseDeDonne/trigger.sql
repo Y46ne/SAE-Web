@@ -27,21 +27,21 @@ CREATE TRIGGER check_nb_personnes_insert AFTER INSERT ON IMPLIQUE FOR EACH ROW
 BEGIN
     DECLARE nb_actuel INT;
     DECLARE nb_requis INT;
-    DECLARE plateforme_id_camp INT;
-    DECLARE campagne_id INT;
-    SET campagne_id = NEW.campagne_id;
+    DECLARE idPl_camp INT;
+    DECLARE idCamp INT;
+    SET idCamp = NEW.idCamp;
 
-    SELECT plateforme_id INTO plateforme_id_camp 
-    FROM CAMPAGNE WHERE id = campagne_id;
+    SELECT idPl INTO idPl_camp 
+    FROM CAMPAGNE WHERE idCamp = idCamp;
 
     SELECT nb_personnes_necessaires INTO nb_requis 
-    FROM PLATEFORME WHERE id = plateforme_id_camp;
+    FROM PLATEFORME WHERE idPl = idPl_camp;
 
     SELECT COUNT(*) INTO nb_actuel 
-    FROM IMPLIQUE WHERE campagne_id = campagne_id;
+    FROM IMPLIQUE WHERE idCamp = idCamp;
 
     IF nb_actuel > nb_requis THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Il y a trop de personnes assignées à la campagne ', campagne_id);
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Il y a trop de personnes assignées à la campagne ', idCamp);
     END IF;
 END |
 
@@ -49,21 +49,21 @@ CREATE TRIGGER check_nb_personnes_update AFTER UPDATE ON IMPLIQUE FOR EACH ROW
 BEGIN
     DECLARE nb_actuel INT;
     DECLARE nb_requis INT;
-    DECLARE plateforme_id_camp INT;
-    DECLARE campagne_id INT;
-    SET campagne_id = NEW.campagne_id;
+    DECLARE idPl_camp INT;
+    DECLARE idCamp INT;
+    SET idCamp = NEW.idCamp;
 
-    SELECT plateforme_id INTO plateforme_id_camp 
-    FROM CAMPAGNE WHERE id = campagne_id;
+    SELECT idPl INTO idPl_camp 
+    FROM CAMPAGNE WHERE idCamp = idCamp;
 
     SELECT nb_personnes_necessaires INTO nb_requis 
-    FROM PLATEFORME WHERE id = plateforme_id_camp;
+    FROM PLATEFORME WHERE idPl = idPl_camp;
 
     SELECT COUNT(*) INTO nb_actuel 
-    FROM IMPLIQUE WHERE campagne_id = campagne_id;
+    FROM IMPLIQUE WHERE idCamp = idCamp;
 
     IF nb_actuel > nb_requis THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Il y a trop de personnes assignées à la campagne ', campagne_id);
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Il y a trop de personnes assignées à la campagne ', idCamp);
     END IF;
 END |
 
@@ -71,21 +71,21 @@ CREATE TRIGGER check_nb_personnes_delete AFTER DELETE ON IMPLIQUE FOR EACH ROW
 BEGIN
     DECLARE nb_actuel INT;
     DECLARE nb_requis INT;
-    DECLARE plateforme_id_camp INT;
-    DECLARE campagne_id INT;
-    SET campagne_id = OLD.campagne_id;
+    DECLARE idPl_camp INT;
+    DECLARE idCamp INT;
+    SET idCamp = OLD.idCamp;
 
-    SELECT plateforme_id INTO plateforme_id_camp 
-    FROM CAMPAGNE WHERE id = campagne_id;
+    SELECT idPl INTO idPl_camp 
+    FROM CAMPAGNE WHERE idCamp = idCamp;
 
     SELECT nb_personnes_necessaires INTO nb_requis 
-    FROM PLATEFORME WHERE id = plateforme_id_camp;
+    FROM PLATEFORME WHERE idPl = idPl_camp;
 
     SELECT COUNT(*) INTO nb_actuel 
-    FROM IMPLIQUE WHERE campagne_id = campagne_id;
+    FROM IMPLIQUE WHERE idCamp = idCamp;
 
     IF nb_actuel > nb_requis THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Il y a trop de personnes assignées à la campagne ', campagne_id);
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Il y a trop de personnes assignées à la campagne ', idCamp);
     END IF;
 END |
 DELIMITER ;
