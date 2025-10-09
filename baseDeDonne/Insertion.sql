@@ -1,31 +1,52 @@
-
--- INSERTIONS DE DONNÉES TEST (VALIDES)
-
-
--- Plateformes
-INSERT INTO PLATEFORME (idPl, nom, nb_personnes_necessaires, cout_journalier, habilitations_requises, intervalle_maintenance)
+INSERT INTO HABILITATION (idHab, nomHab)
 VALUES
-(1, 'Plateforme Alpha', 3, 1200.00, 'HAB1,HAB2', 30),
-(2, 'Plateforme Beta', 2, 800.00, 'HAB2', 45),
-(3, 'Plateforme Gamma', 4, 1500.00, 'HAB1,HAB3', 60),
-(4, 'Plateforme Delta', 3, 1000.00, 'HAB3', 30),
-(5, 'Plateforme Epsilon', 5, 1800.00, 'HAB2,HAB4', 90);
+(1, 'Electrique'),
+(2, 'Chimique'),
+(3, 'Biologique'),
+(4, 'Radiations');
 
--- Personnel
-INSERT INTO PERSONNEL (idPers, nom, habilitations)
+INSERT INTO PLATEFORME (idPl, nom, nb_personnes_necessaires, cout_journalier, intervalle_maintenance)
 VALUES
-(1, 'Dupont', 'HAB1,HAB2'),
-(2, 'Martin', 'HAB2'),
-(3, 'Durand', 'HAB3'),
-(4, 'Petit', 'HAB1,HAB3'),
-(5, 'Bernard', 'HAB2,HAB4'),
-(6, 'Roux', 'HAB1'),
-(7, 'Garcia', 'HAB3,HAB4'),
-(8, 'Fournier', 'HAB2,HAB3'),
-(9, 'Morel', 'HAB4'),
-(10, 'Lambert', 'HAB1,HAB2,HAB3');
+(1, 'Plateforme Alpha', 3, 1200.00, 30),
+(2, 'Plateforme Beta', 2, 800.00, 45),
+(3, 'Plateforme Gamma', 4, 1500.00, 60),
+(4, 'Plateforme Delta', 3, 1000.00, 30),
+(5, 'Plateforme Epsilon', 5, 1800.00, 90);
 
--- Campagnes (dates récentes pour passer le trigger)
+INSERT INTO REQUIERT (idPl, idHab)
+VALUES
+(1, 1), (1, 2),
+(2, 2),
+(3, 1), (3, 3),
+(4, 3),
+(5, 2), (5, 4);
+
+INSERT INTO PERSONNEL (idPers, nom)
+VALUES
+(1, 'Dupont'),
+(2, 'Martin'),
+(3, 'Durand'),
+(4, 'Petit'),
+(5, 'Bernard'),
+(6, 'Roux'),
+(7, 'Garcia'),
+(8, 'Fournier'),
+(9, 'Morel'),
+(10, 'Lambert');
+
+INSERT INTO POSSEDE (idPers, idHab)
+VALUES
+(1, 1), (1, 2),
+(2, 2),
+(3, 3),
+(4, 1), (4, 3),
+(5, 2), (5, 4),
+(6, 1),
+(7, 3), (7, 4),
+(8, 2), (8, 3),
+(9, 4),
+(10, 1), (10, 2), (10, 3);
+
 INSERT INTO CAMPAGNE (idCamp, date_debut, duree, lieu, idPl)
 VALUES
 (1, '2025-10-01', 15, 'Brest', 1),
@@ -39,7 +60,6 @@ VALUES
 (9, '2025-10-24', 22, 'Rennes', 4),
 (10, '2025-10-26', 14, 'Lille', 5);
 
--- Échantillons
 INSERT INTO ECHANTILLON (idEch, fichier_sequence, commentaire, idCamp)
 VALUES
 (1, 'seq_001.fasta', 'Premier échantillon', 1),
@@ -53,7 +73,6 @@ VALUES
 (9, 'seq_009.fasta', 'Validation post-traitement', 7),
 (10, 'seq_010.fasta', 'Échantillon de référence', 8);
 
--- Maintenance
 INSERT INTO MAINTENANCE (idMaint, date_maintenance, duree, type_operation, idPl)
 VALUES
 (1, '2025-10-01', 2, 'Révision générale', 1),
@@ -62,7 +81,6 @@ VALUES
 (4, '2025-10-04', 2, 'Nettoyage', 4),
 (5, '2025-10-05', 4, 'Remplacement capteur', 5);
 
--- Budgets
 INSERT INTO BUDGET (idBudg, mois, montant)
 VALUES
 (1, '2025-10-01', 50000.00),
@@ -71,31 +89,32 @@ VALUES
 (4, '2025-10-01', 55000.00),
 (5, '2025-10-01', 48000.00);
 
--- Implique
 INSERT INTO IMPLIQUE (idCamp, idPers)
 VALUES
 (1, 1),
-(1, 2),
-(2, 3),
+(1, 10),
+(2, 2),
 (3, 4),
-(3, 5),
-(4, 6),
-(5, 7);
+(3, 10),
+(4, 3),
+(5, 5);
 
--- Participe
 INSERT INTO PARTICIPE (idEch, idPers)
 VALUES
+(1, 1),
+(2, 10),
+(3, 2),
+(4, 4),
+(5, 10),
+(6, 3),
+(7, 5);
+
+INSERT INTO VALIDE (idBudg, idCamp)
 (1, 1),
 (2, 2),
 (3, 3),
 (4, 4),
-(5, 5),
-(6, 6),
-(7, 7);
-
--- Valide
-INSERT INTO VALIDE (idBudg, idCamp)
-VALUES
+(5, 5);
 (1, 1),
 (2, 2),
 (3, 3),

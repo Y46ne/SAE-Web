@@ -1,10 +1,8 @@
+-- 1. validation des dates et durée de campagne
+
 DELIMITER |
 
-
--- 1. VALIDATION DES DATES & DURÉE DE CAMPAGNE
-
-
-CREATE TRIGGER validate_campagne_dates_insert
+CREATE OR REPLACE TRIGGER validate_campagne_duree_insert
 BEFORE INSERT ON CAMPAGNE
 FOR EACH ROW
 BEGIN
@@ -12,14 +10,13 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'La durée doit être comprise entre 1 et 365 jours';
     END IF;
-
-    IF NEW.date_debut < DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'La date de début ne peut pas être antérieure de plus de 30 jours';
-    END IF;
 END |
 
-CREATE TRIGGER validate_campagne_dates_update
+DELIMITER ;
+
+DELIMITER |
+
+CREATE OR REPLACE TRIGGER validate_campagne_duree_update
 BEFORE UPDATE ON CAMPAGNE
 FOR EACH ROW
 BEGIN
@@ -27,18 +24,14 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'La durée doit être comprise entre 1 et 365 jours';
     END IF;
-
-    IF NEW.date_debut < DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'La date de début ne peut pas être antérieure de plus de 30 jours';
-    END IF;
 END |
 
+DELIMITER ;
 
--- 2. CONTRÔLE DU NOMBRE DE PERSONNES PAR CAMPAGNE
+-- 2. contrôle du nombre de personnes par campagne
 
-
-CREATE TRIGGER check_nb_personnes_insert
+DELIMITER |
+CREATE OR REPLACE TRIGGER check_nb_personnes_insert
 AFTER INSERT ON IMPLIQUE
 FOR EACH ROW
 BEGIN
@@ -56,8 +49,10 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;
     END IF;
 END |
+DELIMITER ;
 
-CREATE TRIGGER check_nb_personnes_update
+DELIMITER |
+CREATE OR REPLACE TRIGGER check_nb_personnes_update
 AFTER UPDATE ON IMPLIQUE
 FOR EACH ROW
 BEGIN
@@ -75,8 +70,10 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;
     END IF;
 END |
+DELIMITER ;
 
-CREATE TRIGGER check_nb_personnes_delete
+DELIMITER |
+CREATE OR REPLACE TRIGGER check_nb_personnes_delete
 AFTER DELETE ON IMPLIQUE
 FOR EACH ROW
 BEGIN
@@ -94,37 +91,39 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;
     END IF;
 END |
+DELIMITER ;
 
+-- 3. contrôle des habilitations du personnel
 
--- 3. CONTRÔLE DES HABILITATIONS DU PERSONNEL
-
-
-CREATE TRIGGER check_habilitations_insert
+DELIMITER |
+CREATE OR REPLACE TRIGGER check_habilitations_insert
 BEFORE INSERT ON IMPLIQUE
 FOR EACH ROW
 BEGIN
-    DECLARE reqs TEXT;
-    DECLARE habs TEXT;
+    DECLARE nb_hab_requises INT;
+    DECLARE nb_hab_possedees INT;
+    DECLARE idPl_camp INT;
 
-    SELECT p.habilitations_requises INTO reqs
-    FROM PLATEFORME p
-    JOIN CAMPAGNE c ON p.idPl = c.idPl
-    WHERE c.idCamp = NEW.idCamp;
+    SELECT idPl INTO idPl_camp FROM CAMPAGNE WHERE idCamp = NEW.idCamp;
 
-    SELECT habilitations INTO habs FROM PERSONNEL WHERE idPers = NEW.idPers;
+    SELECT COUNT(*) INTO nb_hab_requises FROM REQUIERT WHERE idPl = idPl_camp;
 
-    -- Vérification basique : toutes les habilitations requises doivent apparaître dans habs
-    IF NOT FIND_IN_SET(SUBSTRING_INDEX(reqs, ',', 1), habs) THEN
+    SELECT COUNT(*) INTO nb_hab_possedees
+    FROM REQUIERT r
+    JOIN POSSEDE p ON r.idHab = p.idHab
+    WHERE r.idPl = idPl_camp AND p.idPers = NEW.idPers;
+
+    IF nb_hab_possedees < nb_hab_requises THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Le personnel n’a pas les habilitations requises pour cette campagne';
+        SET MESSAGE_TEXT = 'Le personnel n’a pas toutes les habilitations requises pour cette campagne.';
     END IF;
 END |
+DELIMITER ;
 
+-- 4. contrôle du budget validant
 
--- 4. CONTRÔLE DU BUDGET VALIDANT
-
-
-CREATE TRIGGER check_budget_valide
+DELIMITER |
+CREATE OR REPLACE TRIGGER check_budget_valide
 BEFORE INSERT ON VALIDE
 FOR EACH ROW
 BEGIN
@@ -143,13 +142,12 @@ BEGIN
         SET MESSAGE_TEXT = 'Le budget est insuffisant pour couvrir le coût total de la campagne';
     END IF;
 END |
+DELIMITER ;
 
+-- 5. limiter le nombre d’échantillons par campagne 
 
--- 5. LIMITER LE NOMBRE D’ÉCHANTILLONS PAR CAMPAGNE
--- (exemple : max 10 échantillons)
-
-
-CREATE TRIGGER limit_echantillons_insert
+DELIMITER |
+CREATE OR REPLACE TRIGGER limit_echantillons_insert
 BEFORE INSERT ON ECHANTILLON
 FOR EACH ROW
 BEGIN
@@ -162,5 +160,39 @@ BEGIN
         SET MESSAGE_TEXT = 'Nombre maximum d’échantillons atteint pour cette campagne';
     END IF;
 END |
+DELIMITER ;
 
+-- 6. décrémente le budget validé après une campagne
+
+DELIMITER |
+CREATE OR REPLACE TRIGGER maj_budget_apres_validation_insert
+AFTER INSERT ON VALIDE
+FOR EACH ROW
+BEGIN
+    UPDATE BUDGET
+    SET montant = montant - (
+        SELECT (p.cout_journalier * c.duree)
+        FROM CAMPAGNE c
+        JOIN PLATEFORME p ON c.idPl = p.idPl
+        WHERE c.idCamp = NEW.idCamp
+    )
+    WHERE idBudg = NEW.idBudg;
+END |
+DELIMITER ;
+
+
+DELIMITER |
+CREATE OR REPLACE TRIGGER maj_budget_apres_validation_update
+AFTER UPDATE ON VALIDE
+FOR EACH ROW
+BEGIN
+    UPDATE BUDGET
+    SET montant = montant - (
+        SELECT (p.cout_journalier * c.duree)
+        FROM CAMPAGNE c
+        JOIN PLATEFORME p ON c.idPl = p.idPl
+        WHERE c.idCamp = NEW.idCamp
+    )
+    WHERE idBudg = NEW.idBudg;
+END |
 DELIMITER ;

@@ -1,20 +1,16 @@
-
--- CREATION DES TABLES PRINCIPALES
-
+-- création des tables principales
 
 CREATE TABLE IF NOT EXISTS PLATEFORME (
     idPl INT PRIMARY KEY,
     nom VARCHAR(100),
     nb_personnes_necessaires INT,
     cout_journalier DECIMAL(10,2),
-    habilitations_requises TEXT,
     intervalle_maintenance INT
 );
 
 CREATE TABLE IF NOT EXISTS PERSONNEL (
     idPers INT PRIMARY KEY,
-    nom VARCHAR(100),
-    habilitations TEXT
+    nom VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS BUDGET (
@@ -23,9 +19,14 @@ CREATE TABLE IF NOT EXISTS BUDGET (
     montant DECIMAL(12,2)
 );
 
+CREATE TABLE IF NOT EXISTS HABILITATION (
+    idHab INT PRIMARY KEY,
+    nomHab VARCHAR(50) UNIQUE
+);
 
 
--- CREATION DES ENTITES DEPENDANTES
+
+-- création des entités dépendantes
 
 
 CREATE TABLE IF NOT EXISTS CAMPAGNE (
@@ -56,7 +57,7 @@ CREATE TABLE IF NOT EXISTS MAINTENANCE (
 
 
 
--- CREATION DES RELATIONS
+-- création des relations
 
 
 CREATE TABLE IF NOT EXISTS IMPLIQUE (
@@ -81,4 +82,20 @@ CREATE TABLE IF NOT EXISTS VALIDE (
     PRIMARY KEY (idBudg, idCamp),
     FOREIGN KEY (idBudg) REFERENCES BUDGET(idBudg),
     FOREIGN KEY (idCamp) REFERENCES CAMPAGNE(idCamp)
+);
+
+CREATE TABLE IF NOT EXISTS POSSEDE (
+    idPers INT,
+    idHab INT,
+    PRIMARY KEY (idPers, idHab),
+    FOREIGN KEY (idPers) REFERENCES PERSONNEL(idPers),
+    FOREIGN KEY (idHab) REFERENCES HABILITATION(idHab)
+);
+
+CREATE TABLE IF NOT EXISTS REQUIERT (
+    idPl INT,
+    idHab INT,
+    PRIMARY KEY (idPl, idHab),
+    FOREIGN KEY (idPl) REFERENCES PLATEFORME(idPl),
+    FOREIGN KEY (idHab) REFERENCES HABILITATION(idHab)
 );
