@@ -110,6 +110,7 @@ VALUES
 (7, 5);
 
 INSERT INTO VALIDE (idBudg, idCamp)
+VALUES
 (1, 1),
 (2, 2),
 (3, 3),
