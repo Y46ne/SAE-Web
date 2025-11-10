@@ -1,0 +1,9 @@
+Question 5 : 
+
+la distance calculée par le comptage base à base devient incorrecte. 
+es mutations décalent toute la séquence, ce qui fait que l’algorithme interprète ce décalage comme une suite de remplacements.
+
+Question 7 : 
+
+la complexité de la fonction distance_levenshtein est de n**2 car 
+on peut voir 2 boucle de longueurs des séquences.
