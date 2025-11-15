@@ -1,0 +1,4 @@
+8. Le dernier ancêtre commun du gorille et du chameau est Boreoeutheria. 
+   Pour le lynx et la chauve-souris, le dernier ancêtre commun est Laurasiatheria.
+
+9. distance(carnivora, pholidota) < distance(carnivora, artiodactyla) < distance(carnivora, chiroptera)
