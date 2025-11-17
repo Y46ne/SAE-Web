@@ -1,10 +1,9 @@
 from flask import render_template, request, url_for, redirect, flash
-from flask_login import (
-    login_user, logout_user, login_required, current_user
-)
 from hashlib import sha256
-
 from .app import app, db, login_manager
+from config import *
+
+# ------------------- MAIN -------------------
 from .models import User
 from .forms import LoginForm, RegisterForm
 
@@ -13,9 +12,14 @@ def load_user(user_id):
     """Charge un utilisateur à partir de son ID."""
     return User.query.get(int(user_id))
 
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('tableau_de_bord'))
+
+@app.route('/tableau_de_bord/')
+def tableau_de_bord():
+    return render_template('tableau_de_bord.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
