@@ -1,0 +1,103 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.main-container {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.navbar {
+    background-color: #343a40;
+    padding: 1rem;
+    color: white;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    font-size: 1.25rem;
+}
+
+.form-container {
+    max-width: 480px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Boutons */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+.alert-danger { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+.alert-info { color: #0c5460; background-color: #d1ecf1; border-color: #bee5eb; }

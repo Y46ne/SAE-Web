@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Parc du Jurassique (en Sologne)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dna"></i> Le Parc du Jurassique (en Sologne)</h1>
+        </header>
+
+        <main>
+            <p class="tagline">Application de gestion pour le laboratoire de paléontologie de l'Université d'Orléans.</p>
+            
+            <div class="actions">
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Se connecter</a>
+                <a href="{{ url_for('creer_compte') }}" class="btn btn-primary">Créer un compte</a>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Laboratoire de Paléontologie. Tous droits réservés.</p>
+        </footer>
+    </div>
+</body>
+</html>
