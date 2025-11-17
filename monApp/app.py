@@ -16,3 +16,8 @@ Bootstrap(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 app.config['SQLALCHEMY_ECHO'] = True
+
+@login_manager.user_loader
+def load_user(user_id):
+    from .database import User
+    return User.query.get(user_id)

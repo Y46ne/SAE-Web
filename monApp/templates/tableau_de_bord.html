@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord - Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/tableau_de_bord.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Tableau de bord</h1>
+    <p>Bienvenue, userName - userRole</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <i class="fas fa-bullhorn stat-icon"></i>
+        <div class="stat-value">8</div>
+        <div class="stat-label">Campagnes Actives</div>
+    </div>
+    
+    <div class="stat-card">
+        <i class="fas fa-euro-sign stat-icon"></i>
+        <div class="stat-value">5 200€</div>
+        <div class="stat-label">Budget Total</div>
+    </div>
+    
+    <div class="stat-card">
+        <i class="fas fa-bell stat-icon"></i>
+        <div class="stat-value">3</div>
+        <div class="stat-label">Alertes</div>
+    </div>
+    
+    <div class="stat-card">
+        <i class="fas fa-vial stat-icon"></i>
+        <div class="stat-value">24</div>
+        <div class="stat-label">Échantillons</div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Campagnes en cours</h2>
+            <a href="/campaigns" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nouvelle
+            </a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Date</th>
+                        <th>Durée</th>
+                        <th>Plateforme</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Campagne Printemps 2024</td>
+                        <td>15 Nov 2025</td>
+                        <td>30 jours</td>
+                        <td>Facebook</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>Lancement Produit X</td>
+                        <td>10 Nov 2025</td>
+                        <td>45 jours</td>
+                        <td>Instagram</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>Promotion Black Friday</td>
+                        <td>01 Nov 2025</td>
+                        <td>15 jours</td>
+                        <td>Google Ads</td>
+                        <td><span class="badge badge-warning">En attente</span></td>
+                    </tr>
+                    <tr>
+                        <td>Newsletter Décembre</td>
+                        <td>05 Nov 2025</td>
+                        <td>7 jours</td>
+                        <td>Email</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Utilisation Budget</h2>
+            <select class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                <option>Ce mois</option>
+                <option>Ce trimestre</option>
+                <option>Cette année</option>
+            </select>
+        </div>
+        <div class="chart-container">
+            <canvas id="budgetChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div class="card activity-section">
+        <div class="card-header">
+            <h2 class="card-title">Activité Récente</h2>
+            <a href="/activity" style="color: var(--primary); text-decoration: none; font-weight: 600;">
+                Voir tout <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        <ul class="activity-list">
+            <li class="activity-item">
+                <div class="activity-icon blue">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>Nouvelle campagne créée</h4>
+                    <p>La campagne "Promotion Black Friday" a été créée avec succès</p>
+                </div>
+                <span class="activity-time">Il y a 2 heures</span>
+            </li>
+            <li class="activity-item">
+                <div class="activity-icon green">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>Campagne terminée</h4>
+                    <p>"Campagne Été 2024" s'est terminée avec 12 500 impressions</p>
+                </div>
+                <span class="activity-time">Il y a 5 heures</span>
+            </li>
+            <li class="activity-item">
+                <div class="activity-icon pink">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>Alerte budget</h4>
+                    <p>Le budget de "Lancement Produit X" a atteint 80%</p>
+                </div>
+                <span class="activity-time">Hier</span>
+            </li>
+            <li class="activity-item">
+                <div class="activity-icon blue">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>Nouveaux échantillons</h4>
+                    <p>15 nouveaux échantillons ont été ajoutés à l'inventaire</p>
+                </div>
+                <span class="activity-time">Il y a 2 jours</span>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
