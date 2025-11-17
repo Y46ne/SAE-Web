@@ -1,6 +1,7 @@
 from flask import render_template, request, url_for, redirect, flash
 from hashlib import sha256
 from .app import app, db, login_manager
+from flask_login import login_user, logout_user, login_required
 from config import *
 
 # ------------------- MAIN -------------------
