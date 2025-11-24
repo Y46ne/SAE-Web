@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer le personnel{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/delete_personnel.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Supprimer le personnel</h1>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Confirmation de suppression</h2>
+    </div>
+    <div class="card-content" style="padding: 1.5rem;">
+        <p>Êtes-vous sûr de vouloir supprimer définitivement <strong>{{ personnel.nom }}</strong> ?</p>
+        <p class="text-danger">Cette action est irréversible.</p>
+        
+        <form method="POST" action="" style="margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Confirmer la suppression
+            </button>
+            <a href="{{ url_for('personnel') }}" class="btn btn-secondary">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+/* ===== PAGE ===== */
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 15px;
+}
+
+.page-title + p {
+    color: #555555;
+    margin-bottom: 25px;
+}
+
+
+/* ===== CARDS ===== */
+.card {
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 25px;
+}
+
+.card .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333333;
+}
+
+
+/* ===== FORM LAYOUT ===== */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    font-size: 14px;
+    color: #555555;
+    font-weight: 500;
+}
+
+input[type="number"],
+input[type="file"],
+textarea,
+select {
+    padding: 10px 12px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333333;
+    width: 100%;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #5677ff;
+}
+
+
+/* ===== BUTTONS ===== */
+.btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: #5677ff;
+    color: white;
+    border: none;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #425fd4;
+    transform: translateY(-1px);
+}
+
+
+/* ===== RESULTS ===== */
+.result {
+    margin-top: 15px;
+    padding: 12px;
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.result pre {
+    white-space: pre-wrap;
+    font-size: 14px;
+}

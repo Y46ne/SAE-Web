@@ -28,11 +28,43 @@ def personnel():
 
 @app.route('/plateforme/')
 def plateforme():
-    return render_template('plateforme.html')
+    equipements_fictifs = [
+        {'id': 1, 'nom': 'Séquenceur ADN #1', 'statut': 'Opérationnel', 'statut_class': 'success'},
+        {'id': 2, 'nom': 'Centrifugeuse Z-2000', 'statut': 'En maintenance', 'statut_class': 'warning'},
+        {'id': 3, 'nom': 'Microscope Électronique', 'statut': 'Hors service', 'statut_class': 'danger'},
+        {'id': 4, 'nom': 'PCR Thermocycleur', 'statut': 'Opérationnel', 'statut_class': 'success'},
+    ]
+    return render_template('plateforme.html', equipements=equipements_fictifs)
 
 @app.route('/budget/')
 def budget():
     return render_template('budget.html')
+
+@app.route('/analyse/')
+def analyse():
+    return render_template('analyse.html')
+
+@app.route('/delete_personnel/')
+def delete_personnel():
+    return render_template('delete_personnel.html')
+
+@app.route('/edit_personnel/')
+def edit_personnel():
+    return render_template('edit_personnel.html')
+
+@app.route('/edit_plateforme/<int:equipement_id>', methods=['GET', 'POST'])
+def edit_plateforme(equipement_id):
+    # À remplacer par une requête à la base de données
+    equipement_fictif = {'id': equipement_id, 'nom': 'Séquenceur ADN #'+str(equipement_id), 'statut': 'Opérationnel'}
+    if request.method == 'POST':
+        flash(f"L'équipement {equipement_fictif['nom']} a été mis à jour (simulation).", 'success')
+        return redirect(url_for('plateforme'))
+    return render_template('edit_plateforme.html', equipement=equipement_fictif)
+
+@app.route('/delete_plateforme/<int:equipement_id>', methods=['GET', 'POST'])
+def delete_plateforme(equipement_id):
+    equipement_fictif = {'id': equipement_id, 'nom': 'Séquenceur ADN #'+str(equipement_id)}
+    return render_template('delete_plateforme.html', equipement=equipement_fictif)
 
 @app.route('/campagnes/')
 def campagnes():

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer l'équipement{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Supprimer un équipement</h1>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Confirmation de suppression</h2>
+    </div>
+    <div class="card-content">
+        <p>Êtes-vous sûr de vouloir supprimer définitivement <strong>{{ equipement.nom }}</strong> ?</p>
+        <p class="text-danger">Cette action est irréversible.</p>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Confirmer la suppression
+            </button>
+            <a href="{{ url_for('plateforme') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

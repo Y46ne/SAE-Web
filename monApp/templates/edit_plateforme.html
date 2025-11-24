@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier l'équipement{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Modifier un équipement</h1>
+    <p>Mise à jour des informations de <strong>{{ equipement.nom }}</strong></p>
+</div>
+
+<div class="card form-card">
+    <div class="card-header">
+        <h2 class="card-title">Éditer les informations</h2>
+    </div>
+    <form method="POST" action="">
+        <div class="form-group">
+            <label for="nom">Nom de l'équipement</label>
+            <input type="text" id="nom" name="nom" value="{{ equipement.nom }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="statut">Statut</label>
+            <select id="statut" name="statut">
+                <option value="Opérationnel" {% if equipement.statut == 'Opérationnel' %}selected{% endif %}>Opérationnel</option>
+                <option value="En maintenance" {% if equipement.statut == 'En maintenance' %}selected{% endif %}>En maintenance</option>
+                <option value="Hors service" {% if equipement.statut == 'Hors service' %}selected{% endif %}>Hors service</option>
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Enregistrer les modifications
+            </button>
+            <a href="{{ url_for('plateforme') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
