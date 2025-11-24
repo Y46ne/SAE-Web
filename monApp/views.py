@@ -66,6 +66,17 @@ def delete_plateforme(equipement_id):
     equipement_fictif = {'id': equipement_id, 'nom': 'Séquenceur ADN #'+str(equipement_id)}
     return render_template('delete_plateforme.html', equipement=equipement_fictif)
 
+@app.route('/maintenance/')
+def maintenance():
+    maintenance_adn = [
+        {'id': 1, 'plateforme': 'Séquenceur ADN', 'date_prevue': '2024-06-15', 'statut': 'Prévue', 'statut_class': 'primary'},
+        {'id': 2, 'plateforme': 'Station de nettoyage', 'date_prevue': '2024-05-20', 'statut': 'Terminée', 'statut_class': 'success'},
+    ]
+    return render_template('maintenance.html', maintenances=maintenance_adn)
+
+@app.route('/analyse/')
+def analyse():
+    return render_template('analyse.html')
 @app.route('/campagnes/')
 def campagnes():
     campagnes_adn = [
@@ -87,6 +98,8 @@ def sequences_adn():
         {'id': 3, 'campagne': 'Campagne 1', 'fichier': 'seq3.fasta', 'commentaire': 'Fragment de Triceratops'},
     ]
     return render_template('sequences_adn.html', sequences=sequences_adn)
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
