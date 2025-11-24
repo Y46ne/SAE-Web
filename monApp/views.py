@@ -26,6 +26,14 @@ def tableau_de_bord():
 def personnel():
     return render_template('personnel.html')
 
+@app.route('/plateforme/')
+def plateforme():
+    return render_template('plateforme.html')
+
+@app.route('/budget/')
+def budget():
+    return render_template('budget.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
