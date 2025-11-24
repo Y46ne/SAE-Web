@@ -1,0 +1,243 @@
+/* Filter Card */
+.filter-card {
+    margin-bottom: 20px;
+    background: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+/* Filter Form */
+.filter-form {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group label {
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: #333;
+    font-size: 14px;
+    transition: border 0.2s;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #5677ff;
+}
+
+.filter-group input::placeholder {
+    color: #888;
+}
+
+.filter-group select {
+    cursor: pointer;
+}
+
+/* Card */
+.card {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Table */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f2f2f2;
+}
+
+th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #555;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+tbody tr:hover {
+    background: #f8f8f8;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.badge-success {
+    background: #e6f7ef;
+    color: #2e9d63;
+}
+
+.badge-warning {
+    background: #fff3cd;
+    color: #af8600;
+}
+
+.badge-danger {
+    background: #fde2e2;
+    color: #d9534f;
+}
+
+.badge-primary {
+    background: #e8ecff;
+    color: #5677ff;
+}
+
+/* Action Buttons */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    margin-right: 6px;
+    text-decoration: none;
+    transition: 0.2s;
+    font-size: 14px;
+}
+
+/* Edit */
+.btn-edit {
+    background: rgba(86, 119, 255, 0.1);
+    color: #5677ff;
+}
+
+.btn-edit:hover {
+    background: #5677ff;
+    color: white;
+}
+
+/* Delete */
+.btn-delete {
+    background: rgba(217, 83, 79, 0.1);
+    color: #d9534f;
+}
+
+.btn-delete:hover {
+    background: #d9534f;
+    color: white;
+}
+
+/* Form Card */
+.form-card {
+    background: #ffffff;
+    border: 1px solid #ddd;
+}
+
+/* Form Layout */
+.personnel-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: #333;
+    font-size: 14px;
+    transition: border 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #5677ff;
+}
+
+.form-group input::placeholder {
+    color: #888;
+}
+
+/* Submit Button */
+.btn-success {
+    background: #2e9d63;
+    color: white;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    gap: 6px;
+    justify-self: start;
+    align-self: end;
+}
+
+.btn-success:hover {
+    background: #268455;
+}
