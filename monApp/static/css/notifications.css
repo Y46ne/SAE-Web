@@ -1,0 +1,113 @@
+:root {
+--primary-text-color: #333;
+--secondary-text-color: #666;
+--background-color: #fff;
+--border-color: #eee;
+--icon-blue: #1a73e8;
+--icon-green: #34a853;
+--icon-orange: #fbbc05;
+--icon-grey: #9aa0a6;
+--font-family: sans-serif;
+}
+
+
+.activity-container {
+width: 100%;
+max-width: 800px;
+background-color: var(--background-color);
+border-radius: 8px;
+}
+
+.activity-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 15px 20px 10px 20px;
+border-bottom: 1px solid var(--border-color);
+}
+
+.activity-title {
+font-size: 0.85rem;
+color: var(--secondary-text-color);
+font-weight: 600;
+letter-spacing: 0.5px;
+margin: 0;
+}
+
+.view-all {
+text-decoration: none;
+color: var(--icon-blue);
+font-size: 0.8rem;
+font-weight: 500;
+white-space: nowrap;
+}
+
+.activity-list {
+padding: 0 20px;
+}
+
+.activity-item {
+display: flex;
+align-items: flex-start;
+padding: 10px 0;
+border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child {
+border-bottom: none;
+}
+
+.activity-icon {
+flex-shrink: 0;
+width: 32px;
+height: 32px;
+margin-right: 12px;
+padding: 2px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+background-color: #f0f0f0; 
+}
+
+.activity-icon svg {
+width: 18px;
+height: 18px;
+}
+
+.icon-campaign svg { fill: var(--icon-blue); }
+.icon-checked svg { fill: var(--icon-green); }
+.icon-alert svg { fill: var(--icon-orange); }
+.icon-pencil svg { fill: var(--icon-grey); }
+
+.activity-content {
+flex-grow: 1;
+display: flex;
+flex-direction: column;
+}
+
+.activity-title-main {
+font-size: 0.9rem;
+font-weight: 500;
+color: var(--primary-text-color);
+margin-bottom: 2px;
+}
+
+.activity-description {
+font-size: 0.82rem;
+color: var(--secondary-text-color);
+line-height: 1.3;
+}
+
+.activity-description strong {
+font-weight: 600;
+color: var(--primary-text-color);
+}
+
+.activity-time {
+flex-shrink: 0;
+font-size: 0.75rem;
+color: var(--secondary-text-color);
+margin-left: 15px;
+align-self: flex-start;
+}

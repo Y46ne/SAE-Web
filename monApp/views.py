@@ -34,6 +34,10 @@ def plateforme():
 def budget():
     return render_template('budget.html')
 
+@app.route('/notification/')
+def notification():
+    return render_template('notification.html')
+
 @app.route('/campagnes/')
 def campagnes():
     campagnes_adn = [
