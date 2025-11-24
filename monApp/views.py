@@ -74,9 +74,6 @@ def maintenance():
     ]
     return render_template('maintenance.html', maintenances=maintenance_adn)
 
-@app.route('/analyse/')
-def analyse():
-    return render_template('analyse.html')
 @app.route('/campagnes/')
 def campagnes():
     campagnes_adn = [
