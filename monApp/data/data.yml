@@ -1,0 +1,241 @@
+# Données des utilisateurs (Admin)
+users:
+  - username: "admin"
+    password: "password123"
+
+# Données Habilitations
+habilitations:
+  - id: 1
+    nom: "Electrique"
+  - id: 2
+    nom: "Chimique"
+  - id: 3
+    nom: "Biologique"
+  - id: 4
+    nom: "Radiations"
+
+# Données Plateformes
+plateformes:
+  - id: 1
+    nom: "Plateforme Alpha"
+    nb_personnes_necessaires: 3
+    cout_journalier: 1200.00
+    intervalle_maintenance: 30
+    habilitations_requises: [1, 2] 
+  - id: 2
+    nom: "Plateforme Beta"
+    nb_personnes_necessaires: 2
+    cout_journalier: 800.00
+    intervalle_maintenance: 45
+    habilitations_requises: [2]
+  - id: 3
+    nom: "Plateforme Gamma"
+    nb_personnes_necessaires: 4
+    cout_journalier: 1500.00
+    intervalle_maintenance: 60
+    habilitations_requises: [1, 3]
+  - id: 4
+    nom: "Plateforme Delta"
+    nb_personnes_necessaires: 3
+    cout_journalier: 1000.00
+    intervalle_maintenance: 30
+    habilitations_requises: [3]
+  - id: 5
+    nom: "Plateforme Epsilon"
+    nb_personnes_necessaires: 5
+    cout_journalier: 1800.00
+    intervalle_maintenance: 90
+    habilitations_requises: [2, 4]
+
+# Données Personnel
+personnel:
+  - id: 1
+    nom: "Dupont"
+    habilitations: [1, 2]
+  - id: 2
+    nom: "Martin"
+    habilitations: [2]
+  - id: 3
+    nom: "Durand"
+    habilitations: [3]
+  - id: 4
+    nom: "Petit"
+    habilitations: [1, 3]
+  - id: 5
+    nom: "Bernard"
+    habilitations: [2, 4]
+  - id: 6
+    nom: "Roux"
+    habilitations: [1]
+  - id: 7
+    nom: "Garcia"
+    habilitations: [3, 4]
+  - id: 8
+    nom: "Fournier"
+    habilitations: [2, 3]
+  - id: 9
+    nom: "Morel"
+    habilitations: [4]
+  - id: 10
+    nom: "Lambert"
+    habilitations: [1, 2, 3]
+
+# Données Budget
+budgets:
+  - id: 1
+    mois: "2025-10-01"
+    montant: 50000.00
+  - id: 2
+    mois: "2025-10-01"
+    montant: 45000.00
+  - id: 3
+    mois: "2025-10-01"
+    montant: 60000.00
+  - id: 4
+    mois: "2025-10-01"
+    montant: 55000.00
+  - id: 5
+    mois: "2025-10-01"
+    montant: 48000.00
+
+# Données Campagnes
+campagnes:
+  - id: 1
+    date_debut: "2025-10-01"
+    duree: 15
+    lieu: "Brest"
+    id_plateforme: 1
+    id_budget: 1 
+    personnel_implique: [1, 10]
+  - id: 2
+    date_debut: "2025-10-05"
+    duree: 10
+    lieu: "Nantes"
+    id_plateforme: 2
+    id_budget: 2
+    personnel_implique: [2]
+  - id: 3
+    date_debut: "2025-10-10"
+    duree: 20
+    lieu: "Lyon"
+    id_plateforme: 3
+    id_budget: 3
+    personnel_implique: [4, 10]
+  - id: 4
+    date_debut: "2025-10-12"
+    duree: 25
+    lieu: "Paris"
+    id_plateforme: 4
+    id_budget: 4
+    personnel_implique: [3]
+  - id: 5
+    date_debut: "2025-10-15"
+    duree: 18
+    lieu: "Marseille"
+    id_plateforme: 5
+    id_budget: 5
+    personnel_implique: [5]
+
+  - id: 6
+    date_debut: "2025-10-18"
+    duree: 12
+    lieu: "Toulouse"
+    id_plateforme: 2
+  - id: 7
+    date_debut: "2025-10-20"
+    duree: 30
+    lieu: "Bordeaux"
+    id_plateforme: 1
+  - id: 8
+    date_debut: "2025-10-22"
+    duree: 10
+    lieu: "Nice"
+    id_plateforme: 3
+  - id: 9
+    date_debut: "2025-10-24"
+    duree: 22
+    lieu: "Rennes"
+    id_plateforme: 4
+  - id: 10
+    date_debut: "2025-10-26"
+    duree: 14
+    lieu: "Lille"
+    id_plateforme: 5
+
+# Données Echantillons
+echantillons:
+  - id: 1
+    fichier_sequence: "seq_001.fasta"
+    commentaire: "Premier échantillon"
+    id_campagne: 1
+    personnel_participant: [1]
+  - id: 2
+    fichier_sequence: "seq_002.fasta"
+    commentaire: "Contrôle qualité"
+    id_campagne: 1
+    personnel_participant: [10]
+  - id: 3
+    fichier_sequence: "seq_003.fasta"
+    commentaire: "Deuxième campagne"
+    id_campagne: 2
+    personnel_participant: [2]
+  - id: 4
+    fichier_sequence: "seq_004.fasta"
+    commentaire: "Analyse gamma"
+    id_campagne: 3
+    personnel_participant: [4]
+  - id: 5
+    fichier_sequence: "seq_005.fasta"
+    commentaire: "Test complémentaire"
+    id_campagne: 3
+    personnel_participant: [10]
+  - id: 6
+    fichier_sequence: "seq_006.fasta"
+    commentaire: "Mesure comparative"
+    id_campagne: 4
+    personnel_participant: [3]
+  - id: 7
+    fichier_sequence: "seq_007.fasta"
+    commentaire: "Campagne mer"
+    id_campagne: 5
+    personnel_participant: [5]
+  - id: 8
+    fichier_sequence: "seq_008.fasta"
+    commentaire: "Suivi microbiologique"
+    id_campagne: 6
+  - id: 9
+    fichier_sequence: "seq_009.fasta"
+    commentaire: "Validation post-traitement"
+    id_campagne: 7
+  - id: 10
+    fichier_sequence: "seq_010.fasta"
+    commentaire: "Échantillon de référence"
+    id_campagne: 8
+
+# Données Maintenance
+maintenances:
+  - id: 1
+    date_maintenance: "2025-10-01"
+    duree: 2
+    type_operation: "Révision générale"
+    id_plateforme: 1
+  - id: 2
+    date_maintenance: "2025-10-02"
+    duree: 1
+    type_operation: "Calibration"
+    id_plateforme: 2
+  - id: 3
+    date_maintenance: "2025-10-03"
+    duree: 3
+    type_operation: "Mise à jour système"
+    id_plateforme: 3
+  - id: 4
+    date_maintenance: "2025-10-04"
+    duree: 2
+    type_operation: "Nettoyage"
+    id_plateforme: 4
+  - id: 5
+    date_maintenance: "2025-10-05"
+    duree: 4
+    type_operation: "Remplacement capteur"
+    id_plateforme: 5
