@@ -34,6 +34,19 @@ def plateforme():
 def budget():
     return render_template('budget.html')
 
+@app.route('/sequences_adn/', methods=['GET', 'POST'])
+def sequences_adn():
+    if request.method == 'POST':
+        flash('Ajout de séquence non implémenté.', 'info')
+        return redirect(url_for('sequences_adn'))
+
+    sequences_adn = [
+        {'id': 1, 'campagne': 'Campagne 1', 'fichier': 'seq1.fasta', 'commentaire': 'Fragment de T-Rex'},
+        {'id': 2, 'campagne': 'Campagne 2', 'fichier': 'seq2.fasta', 'commentaire': 'Fragment de Velociraptor'},
+        {'id': 3, 'campagne': 'Campagne 1', 'fichier': 'seq3.fasta', 'commentaire': 'Fragment de Triceratops'},
+    ]
+    return render_template('sequences_adn.html', sequences=sequences_adn)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
