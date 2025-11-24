@@ -22,6 +22,10 @@ def index():
 def tableau_de_bord():
     return render_template('tableau_de_bord.html')
 
+@app.route('/personnel/')
+def personnel():
+    return render_template('personnel.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()

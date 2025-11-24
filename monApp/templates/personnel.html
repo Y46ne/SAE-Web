@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion du personnel{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/personnel.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Gestion du personnel</h1>
+    <p>Bienvenue, userName - userRole</p>
+</div>
+
+<div class="card filter-card">
+    <form method="GET" action="/personnel" class="filter-form">
+        <div class="filter-group">
+            <label for="search">Recherche par nom :</label>
+            <input type="text" id="search" name="search" placeholder="Entrez un nom...">
+        </div>
+        
+        <div class="filter-group">
+            <label for="habilitation">Filtrer par habilitation :</label>
+            <select id="habilitation" name="habilitation">
+                <option value="">Toutes les habilitations</option>
+                <option value="electrique">Électrique</option>
+                <option value="chimique">Chimique</option>
+                <option value="biologie">Biologie</option>
+                <option value="radiations">Radiations</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-filter"></i> Filtrer
+        </button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Liste du personnel</h2>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Habilitations</th>
+                    <th>Disponibilité</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Jean Dupont</td>
+                    <td>
+                        <span class="badge badge-habilitation">Électrique</span>
+                        <span class="badge badge-habilitation">Chimique</span>
+                    </td>
+                    <td><span class="badge badge-success">Disponible</span></td>
+                    <td>
+                        <a href="/personnel/edit/1" class="btn-action btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/personnel/delete/1" class="btn-action btn-delete" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Marie Martin</td>
+                    <td>
+                        <span class="badge badge-habilitation">Biologie</span>
+                    </td>
+                    <td><span class="badge badge-warning">En mission</span></td>
+                    <td>
+                        <a href="/personnel/edit/2" class="btn-action btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/personnel/delete/2" class="btn-action btn-delete" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Pierre Durand</td>
+                    <td>
+                        <span class="badge badge-habilitation">Radiations</span>
+                        <span class="badge badge-habilitation">Électrique</span>
+                    </td>
+                    <td><span class="badge badge-success">Disponible</span></td>
+                    <td>
+                        <a href="/personnel/edit/3" class="btn-action btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/personnel/delete/3" class="btn-action btn-delete" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-header">
+        <h2 class="card-title">Ajouter une personne</h2>
+    </div>
+    <form method="POST" action="/personnel/add" class="personnel-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nom">Nom / prénom</label>
+                <input type="text" id="nom" name="nom" placeholder="Nom complet" required>
+            </div>
+            
+            <div class="form-group habilitation-group">
+                <label>Habilitation</label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="electrique" name="habilitation" value="electrique">
+                        <label for="electrique">Électrique</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="chimique" name="habilitation" value="chimique">
+                        <label for="chimique">Chimique</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="biologie" name="habilitation" value="biologie">
+                        <label for="biologie">Biologie</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="radiations" name="habilitation" value="radiations">
+                        <label for="radiations">Radiations</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-plus"></i> Ajouter
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
