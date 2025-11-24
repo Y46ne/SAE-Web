@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Analyse ADN{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/analyse.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Analyse des séquences ADN</h1>
+
+
+<div class="card">
+    <h2 class="card-title">Générer une séquence ADN aléatoire</h2>
+    <form method="POST" action="#">
+        <label>Longueur de la séquence :</label>
+        <input type="number" name="length" min="1" required>
+        <button class="btn btn-primary" type="submit">Générer</button>
+    </form>
+    {% if generated_sequence %}
+    <div class="result">
+        <h4>Résultat :</h4>
+        <pre>{{ generated_sequence }}</pre>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<div class="card">
+    <h2 class="card-title">Simuler des mutations</h2>
+    <form method="POST" action="#">
+        <label>Séquence ADN d’origine :</label>
+        <textarea name="sequence" rows="3" required></textarea>
+        <label>Taux mutation remplacement (0–1) :</label>
+        <input type="number" name="p_replace" step="0.01" min="0" max="1" value="0.01">
+        <label>Taux mutation insertion (0–1) :</label>
+        <input type="number" name="p_insert" step="0.01" min="0" max="1" value="0">
+        <label>Taux mutation délétion (0–1) :</label>
+        <input type="number" name="p_delete" step="0.01" min="0" max="1" value="0">
+        <button class="btn btn-primary" type="submit">Muter</button>
+    </form>
+    {% if mutated_sequence %}
+    <div class="result">
+        <h4>Résultat :</h4>
+        <pre>{{ mutated_sequence }}</pre>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<div class="card">
+    <h2 class="card-title">Distance simple (base à base)</h2>
+    <form method="POST" action="#">
+        <label>Séquence 1 :</label>
+        <textarea name="seq1" rows="2" required></textarea>
+        <label>Séquence 2 :</label>
+        <textarea name="seq2" rows="2" required></textarea>
+        <button class="btn btn-primary" type="submit">Calculer</button>
+    </form>
+    {% if base_distance is not none %}
+    <div class="result">
+        <h4>Distance = {{ base_distance }}</h4>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<div class="card">
+    <h2 class="card-title">Distance de Levenshtein</h2>
+    <form method="POST" action="#">
+        <label>Séquence 1 :</label>
+        <textarea name="seq1" rows="2" required></textarea>
+        <label>Séquence 2 :</label>
+        <textarea name="seq2" rows="2" required></textarea>
+        <button class="btn btn-primary" type="submit">Calculer</button>
+    </form>
+    {% if levenshtein_distance is not none %}
+    <div class="result">
+        <h4>Distance = {{ levenshtein_distance }}</h4>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<div class="card">
+    <h2 class="card-title">Analyser des fichiers .adn</h2>
+    <form method="POST" action="#" enctype="multipart/form-data">
+        <label>Importer un fichier .adn :</label>
+        <input type="file" name="adnfile" accept=".adn" required>
+        <button class="btn btn-primary" type="submit">Analyser</button>
+    </form>
+    {% if uploaded_sequence %}
+    <div class="result">
+        <h4>Séquence importée :</h4>
+        <pre>{{ uploaded_sequence }}</pre>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<div class="card">
+    <h2 class="card-title">Construire un arbre phylogénétique</h2>
+    <form method="POST" action="#">
+        <label>Saisissez plusieurs séquences ADN (une par ligne) :</label>
+        <textarea name="sequences" rows="6" placeholder="AACTGTTG...\nAGTTCTA...\nACCTG..." required></textarea>
+        <button class="btn btn-primary" type="submit">Construire l’arbre</button>
+    </form>
+    {% if phylo_tree %}
+    <div class="result">
+        <h4>Résultat :</h4>
+        <pre>{{ phylo_tree }}</pre>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
