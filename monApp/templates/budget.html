@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion du budget{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/budget.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Gestion du budget</h1>
+    <p>Bienvenue, userName - userRole</p>
+</div>
+
+<div class="card filter-card">
+    <form method="GET" action="/budget" class="filter-form">
+        <div class="filter-group">
+            <label for="search">Recherche par nom :</label>
+            <input type="text" id="search" name="search" placeholder="Entrez un nom de campagne...">
+        </div>
+        
+        <div class="filter-group">
+            <label for="status">Filtrer par statut :</label>
+            <select id="status" name="status">
+                <option value="">Tous les statuts</option>
+                <option value="active">Actif</option>
+                <option value="completed">Terminé</option>
+                <option value="pending">En attente</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-filter"></i> Filtrer
+        </button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Détails du budget par campagne</h2>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Campagne</th>
+                    <th>Budget Alloué</th>
+                    <th>Dépenses Actuelles</th>
+                    <th>Reste à Dépenser</th>
+                    <th>Statut</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Analyse ADN</td>
+                    <td>1 500€</td>
+                    <td>1 200€</td>
+                    <td>300€</td>
+                    <td><span class="badge badge-success">Actif</span></td>
+                    <td>
+                        <a href="/budget/edit/1" class="btn-action btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/budget/delete/1" class="btn-action btn-delete" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Recherche fossiles</td>
+                    <td>2 000€</td>
+                    <td>1 800€</td>
+                    <td>200€</td>
+                    <td><span class="badge badge-success">Actif</span></td>
+                    <td>
+                        <a href="/budget/edit/2" class="btn-action btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/budget/delete/2" class="btn-action btn-delete" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Datation Carbone</td>
+                    <td>1 000€</td>
+                    <td>500€</td>
+                    <td>500€</td>
+                    <td><span class="badge badge-warning">En attente</span></td>
+                    <td>
+                        <a href="/budget/edit/3" class="btn-action btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/budget/delete/3" class="btn-action btn-delete" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Étude environnementale</td>
+                    <td>700€</td>
+                    <td>650€</td>
+                    <td>50€</td>
+                    <td><span class="badge badge-success">Actif</span></td>
+                    <td>
+                        <a href="/budget/edit/4" class="btn-action btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/budget/delete/4" class="btn-action btn-delete" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
