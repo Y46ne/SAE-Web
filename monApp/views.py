@@ -34,6 +34,15 @@ def plateforme():
 def budget():
     return render_template('budget.html')
 
+@app.route('/campagnes/')
+def campagnes():
+    campagnes_adn = [
+        {'id': 1, 'nom': 'Fouille du Trias', 'date_debut': '2024-06-01', 'duree': 30, 'lieu': 'Forêt de Sologne', 'statut': 'En cours', 'statut_class': 'warning'},
+        {'id': 2, 'nom': 'Exploration du Crétacé', 'date_debut': '2024-07-15', 'duree': 45, 'lieu': 'Sud de la France', 'statut': 'Prévue', 'statut_class': 'primary'},
+        {'id': 3, 'nom': 'Recherche du Jurassique', 'date_debut': '2024-04-10', 'duree': 20, 'lieu': 'Normandie', 'statut': 'Terminée', 'statut_class': 'success'},
+    ]
+    return render_template('campagnes.html', campagnes=campagnes_adn)
+
 @app.route('/sequences_adn/', methods=['GET', 'POST'])
 def sequences_adn():
     if request.method == 'POST':
