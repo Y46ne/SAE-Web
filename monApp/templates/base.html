@@ -18,8 +18,8 @@
         <nav>
             <ul class="sidebar-menu">
                 <li><a href="/" class="active"><i class="fas fa-home"></i> Tableau de bord</a></li>
-                <li><a href="/campaigns"><i class="fas fa-bullhorn"></i> Campagnes</a></li>
-                <li><a href="/budget"><i class="fas fa-user"></i> Personnel</a></li>
+                <li><a href="{{ url_for('campagnes') }}"><i class="fas fa-bullhorn"></i> Campagnes</a></li>
+                <li><a href="{{ url_for('personnel') }}"><i class="fas fa-user"></i> Personnel</a></li>
                 <li><a href="/alerts"><i class="fas fa-bell"></i> Alertes</a></li>
                 <li><a href="/samples"><i class="fas fa-vial"></i> Échantillons</a></li>
                 <li><a href="/analytics"><i class="fas fa-chart-bar"></i> Analytiques</a></li>
