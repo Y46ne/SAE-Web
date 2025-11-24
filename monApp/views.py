@@ -34,6 +34,10 @@ def plateforme():
 def budget():
     return render_template('budget.html')
 
+@app.route('/analyse/')
+def analyse():
+    return render_template('analyse.html')
+
 @app.route('/sequences_adn/', methods=['GET', 'POST'])
 def sequences_adn():
     if request.method == 'POST':
@@ -46,6 +50,8 @@ def sequences_adn():
         {'id': 3, 'campagne': 'Campagne 1', 'fichier': 'seq3.fasta', 'commentaire': 'Fragment de Triceratops'},
     ]
     return render_template('sequences_adn.html', sequences=sequences_adn)
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
