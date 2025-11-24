@@ -10,7 +10,21 @@
 --font-family: sans-serif;
 }
 
+body {
+    font-family: var(--font-family);
+    background-color: #f8f8f8; 
+    padding: 0;
+    flex-direction: column;
+    align-items: center;
+}
 
+.card {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
 .activity-container {
 width: 100%;
 max-width: 800px;
