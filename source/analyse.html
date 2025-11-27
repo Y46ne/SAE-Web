@@ -76,7 +76,6 @@
         {% endif %}
     </div>
 
-
     <!-- Arbre phylogénétique -->
     <div class="card">
         <h2 class="card-title">Construire un Arbre Phylogénétique</h2>
@@ -96,4 +95,16 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Simple script to scroll to the result card if it exists
+    const result = document.querySelector('.result');
+    if (result) {
+        result.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
+</script>
 {% endblock %}

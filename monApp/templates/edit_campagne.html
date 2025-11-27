@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier la Campagne{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Modifier la Campagne</h1>
+    <p>Mettre à jour les détails de la campagne "{{ campagne.nom }}".</p>
+</div>
+
+<div class="card form-card">
+    <div class="card-header">
+        <h2 class="card-title">Détails de la campagne</h2>
+    </div>
+    <form method="POST" action="{{ url_for('edit_campagne', campagne_id=campagne.idCamp) }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.nom.label(for="nom") }}
+            {{ form.nom(id="nom", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.lieu.label(for="lieu") }}
+            {{ form.lieu(id="lieu", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.date_debut.label(for="date_debut") }}
+            {{ form.date_debut(id="date_debut", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.duree.label(for="duree") }}
+            {{ form.duree(id="duree", min="1", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.plateforme.label(for="plateforme") }}
+            {{ form.plateforme(id="plateforme", class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.personnel_implique.label(for="personnel_implique") }}
+            {{ form.personnel_implique(id="personnel_implique", class="form-control") }}
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">Mettre à jour</button>
+            <a href="{{ url_for('campagnes') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

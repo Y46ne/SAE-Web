@@ -68,6 +68,7 @@ class PersonnelForm(FlaskForm):
 
 
 class CampagneForm(FlaskForm):
+    nom = StringField('Nom de la Campagne', validators=[DataRequired()])
     date_debut = DateField('Date de début', format='%Y-%m-%d', validators=[DataRequired()])
     duree = IntegerField('Durée (jours)', validators=[DataRequired(), NumberRange(min=1, max=365)])
     lieu = StringField('Lieu', validators=[DataRequired()])

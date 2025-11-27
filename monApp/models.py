@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from .app import db
+from datetime import date, timedelta
 
 
 class User(db.Model, UserMixin):
@@ -87,6 +88,14 @@ class Budget(db.Model):
     def __repr__(self):
         return f'<Budget {self.idBudg} - {self.mois}>'
 
+    @property
+    def cout_total_campagnes(self):
+        total_cost = 0
+        for campagne in self.campagnes_validees:
+            if campagne.plateforme and campagne.plateforme.cout_journalier is not None and campagne.duree is not None:
+                total_cost += campagne.plateforme.cout_journalier * campagne.duree
+        return total_cost
+
 
 class Habilitation(db.Model):
     __tablename__ = 'HABILITATION'
@@ -101,6 +110,7 @@ class Campagne(db.Model):
     __tablename__ = 'CAMPAGNE'
 
     idCamp = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100))
     date_debut = db.Column(db.Date)
     duree = db.Column(db.Integer)
     lieu = db.Column(db.String(100))
@@ -111,6 +121,25 @@ class Campagne(db.Model):
 
     def __repr__(self):
         return f'<Campagne {self.idCamp} - {self.lieu}>'
+
+    @property
+    def statut(self):
+        today = date.today()
+        if self.date_debut > today:
+            return "Prévue"
+        elif self.date_debut <= today <= self.date_debut + timedelta(days=self.duree):
+            return "En cours"
+        else:
+            return "Terminée"
+
+    @property
+    def statut_class(self):
+        if self.statut == "Prévue":
+            return "primary"
+        elif self.statut == "En cours":
+            return "success"
+        else:
+            return "danger"
 
 
 class Echantillon(db.Model):

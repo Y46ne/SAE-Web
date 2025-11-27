@@ -17,13 +17,13 @@
         </div>
         <nav>
             <ul class="sidebar-menu">
-                <li><a href="/" class="active"><i class="fas fa-home"></i> Tableau de bord</a></li>
-                <li><a href="{{ url_for('campagnes') }}"><i class="fas fa-bullhorn"></i> Campagnes</a></li>
-                <li><a href="{{ url_for('personnel') }}"><i class="fas fa-user"></i> Personnel</a></li>
-                <li><a href="alerts"><i class="fas fa-bell"></i> Alertes</a></li>
-                <li><a href="{{ url_for('sequences_adn') }}"><i class="fas fa-vial"></i> Échantillons</a></li>
-                <li><a href="{{ url_for('analyse') }}"><i class="fas fa-chart-bar"></i> Analytiques</a></li>
-                <li><a href="/settings"><i class="fas fa-cog"></i> Paramètres</a></li>
+                <li><a href="{{ url_for('tableau_de_bord') }}" class="{{ 'active' if 'tableau_de_bord' in request.endpoint else '' }}"><i class="fas fa-home"></i> Tableau de bord</a></li>
+                <li><a href="{{ url_for('campagnes') }}" class="{{ 'active' if 'campagnes' in request.endpoint else '' }}"><i class="fas fa-bullhorn"></i> Campagnes</a></li>
+                <li><a href="{{ url_for('personnel') }}" class="{{ 'active' if 'personnel' in request.endpoint else '' }}"><i class="fas fa-users"></i> Personnel</a></li>
+                <li><a href="{{ url_for('plateforme') }}" class="{{ 'active' if 'plateforme' in request.endpoint else '' }}"><i class="fas fa-cogs"></i> Plateformes</a></li>
+                <li><a href="{{ url_for('sequences_adn') }}" class="{{ 'active' if 'sequences_adn' in request.endpoint else '' }}"><i class="fas fa-dna"></i> Échantillons</a></li>
+                <li><a href="{{ url_for('budget') }}" class="{{ 'active' if 'budget' in request.endpoint else '' }}"><i class="fas fa-wallet"></i> Budgets</a></li>
+                <li><a href="{{ url_for('analyse') }}" class="{{ 'active' if 'analyse' in request.endpoint else '' }}"><i class="fas fa-chart-bar"></i> Analyse ADN</a></li>
             </ul>
         </nav>
     </aside>
@@ -31,16 +31,19 @@
     <main class="main-content">
         <header class="header">
             <div class="header-left">
-                <button class="btn-menu" onclick="toggleSidebar()">
+                <button class="btn-menu">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
             <div class="user-info">
                 <div class="user-avatar">UN</div>
                 <div class="user-details">
-                    <span class="user-name">userName</span>
-                    <span class="user-role">userRole</span>
+                    <span class="user-name">{{ current_user.username }}</span>
+                    <span class="user-role">Chercheur</span>
                 </div>
+                <a href="{{ url_for('logout') }}" class="btn-logout" title="Déconnexion">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
             </div>
         </header>
 

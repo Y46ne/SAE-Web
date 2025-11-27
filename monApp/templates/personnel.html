@@ -9,7 +9,7 @@
 {% block content %}
 <div class="page-title">
     <h1>Gestion du personnel</h1>
-    <p>Bienvenue, userName - userRole</p>
+    <p>Gérer les membres de l'équipe et leurs habilitations.</p>
 </div>
 
 <div class="card filter-card">
@@ -51,53 +51,27 @@
                 </tr>
             </thead>
             <tbody>
+                {% for personne in personnel_list %}
                 <tr>
-                    <td>Jean Dupont</td>
+                    <td>{{ personne.nom }}</td>
                     <td>
-                        <span class="badge badge-habilitation">Électrique</span>
-                        <span class="badge badge-habilitation">Chimique</span>
+                        {% for hab in personne.habilitations %}
+                        <span class="badge badge-habilitation">{{ hab.nomHab }}</span>
+                        {% else %}
+                        <span class="text-muted">Aucune</span>
+                        {% endfor %}
                     </td>
-                    <td><span class="badge badge-success">Disponible</span></td>
+                    <td><span class="badge badge-success">Disponible</span></td> {# Logique de dispo à implémenter #}
                     <td>
-                        <a href="{{url_for('edit_personnel')}}" class="btn-action btn-edit" title="Modifier">
+                        <a href="{{ url_for('edit_personnel', personnel_id=personne.idPers) }}" class="btn-action btn-edit" title="Modifier">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="{{url_for('delete_personnel')}}" class="btn-action btn-delete" title="Supprimer">
+                        <a href="{{ url_for('delete_personnel', personnel_id=personne.idPers) }}" class="btn-action btn-delete" title="Supprimer">
                             <i class="fas fa-trash"></i>
                         </a>
                     </td>
                 </tr>
-                <tr>
-                    <td>Marie Martin</td>
-                    <td>
-                        <span class="badge badge-habilitation">Biologie</span>
-                    </td>
-                    <td><span class="badge badge-warning">En mission</span></td>
-                    <td>
-                        <a href="/personnel/edit/2" class="btn-action btn-edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="/personnel/delete/2" class="btn-action btn-delete" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Pierre Durand</td>
-                    <td>
-                        <span class="badge badge-habilitation">Radiations</span>
-                        <span class="badge badge-habilitation">Électrique</span>
-                    </td>
-                    <td><span class="badge badge-success">Disponible</span></td>
-                    <td>
-                        <a href="/personnel/edit/3" class="btn-action btn-edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="/personnel/delete/3" class="btn-action btn-delete" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -107,7 +81,7 @@
     <div class="card-header">
         <h2 class="card-title">Ajouter une personne</h2>
     </div>
-    <form method="POST" action="/personnel/add" class="personnel-form">
+    <form method="POST" action="{{ url_for('personnel') }}" class="personnel-form">
         <div class="form-row">
             <div class="form-group">
                 <label for="nom">Nom / prénom</label>
@@ -117,22 +91,12 @@
             <div class="form-group habilitation-group">
                 <label>Habilitation</label>
                 <div class="checkbox-grid">
+                    {% for hab in all_habilitations %}
                     <div class="checkbox-item">
-                        <input type="checkbox" id="electrique" name="habilitation" value="electrique">
-                        <label for="electrique">Électrique</label>
+                        <input type="checkbox" id="hab-{{ hab.idHab }}" name="habilitation" value="{{ hab.idHab }}">
+                        <label for="hab-{{ hab.idHab }}">{{ hab.nomHab }}</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="chimique" name="habilitation" value="chimique">
-                        <label for="chimique">Chimique</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="biologie" name="habilitation" value="biologie">
-                        <label for="biologie">Biologie</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="radiations" name="habilitation" value="radiations">
-                        <label for="radiations">Radiations</label>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
             

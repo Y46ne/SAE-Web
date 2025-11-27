@@ -122,6 +122,7 @@ def loaddb(filename):
     # CAMPAGNES
     for c in data.get('campagnes', []):
         camp = Campagne(
+            nom=c['nom'],
             date_debut=datetime.strptime(c['date_debut'], '%Y-%m-%d').date(),
             duree=c['duree'],
             lieu=c['lieu']

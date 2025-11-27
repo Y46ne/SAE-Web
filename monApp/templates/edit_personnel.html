@@ -3,7 +3,7 @@
 {% block title %}Modifier le personnel{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/edit_personnel.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -16,35 +16,25 @@
     <div class="card-header">
         <h2 class="card-title">Éditer les informations</h2>
     </div>
-    <form method="POST" action="" class="personnel-form">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="nom">Nom / prénom</label>
-                <input type="text" id="nom" name="nom" value="{{ personnel.nom }}" required>
+    <form method="POST" action="{{ url_for('edit_personnel', personnel_id=personnel.idPers) }}">
+        <div class="form-group">
+            <label for="nom">Nom / prénom</label>
+            <input type="text" id="nom" name="nom" value="{{ personnel.nom }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Habilitations</label>
+            <div class="checkbox-grid" style="grid-template-columns: 1fr 1fr;">
+                {% for hab in all_habilitations %}
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hab-{{ hab.idHab }}" name="habilitation" value="{{ hab.idHab }}" {% if hab.idHab in personnel_hab_ids %}checked{% endif %}>
+                        <label for="hab-{{ hab.idHab }}">{{ hab.nomHab }}</label>
+                    </div>
+                {% endfor %}
             </div>
-            
-            <div class="form-group habilitation-group">
-                <label>Habilitations</label>
-                <div class="checkbox-grid">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="electrique" name="habilitation" value="electrique" {% if 'Électrique' in personnel.habilitations %}checked{% endif %}>
-                        <label for="electrique">Électrique</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="chimique" name="habilitation" value="chimique" {% if 'Chimique' in personnel.habilitations %}checked{% endif %}>
-                        <label for="chimique">Chimique</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="biologie" name="habilitation" value="biologie" {% if 'Biologie' in personnel.habilitations %}checked{% endif %}>
-                        <label for="biologie">Biologie</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="radiations" name="habilitation" value="radiations" {% if 'Radiations' in personnel.habilitations %}checked{% endif %}>
-                        <label for="radiations">Radiations</label>
-                    </div>
-                </div>
-            </div>
-            
+        </div>
+        
+        <div class="form-actions">
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-save"></i> Enregistrer les modifications
             </button>

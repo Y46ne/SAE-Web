@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un équipement{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Ajouter un équipement</h1>
+    <p>Enregistrer un nouvel équipement dans la plateforme technique.</p>
+</div>
+
+<div class="card form-card">
+    <div class="card-header">
+        <h2 class="card-title">Nouvel équipement</h2>
+    </div>
+    <form method="POST" action="{{ url_for('add_plateforme') }}">
+        <div class="form-group">
+            <label for="nom">Nom de l'équipement</label>
+            <input type="text" id="nom" name="nom" placeholder="Ex: Séquenceur ADN Pro" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-plus"></i> Ajouter l'équipement
+            </button>
+            <a href="{{ url_for('plateforme') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

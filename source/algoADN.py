@@ -1,6 +1,6 @@
 import random
-from constantes import *
 
+bases = ["A","T","C","G"]
 
 def generer_sequence_adn_aleatoire(longueur: int):
     """Génère une séquence ADN aléatoire d'une longueur spécifiée.

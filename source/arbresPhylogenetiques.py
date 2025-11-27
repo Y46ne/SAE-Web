@@ -1,5 +1,12 @@
-from Espece import Espece
-from EspeceHypothetique import EspeceHypothetique
+class Espece:
+    def __init__(self, nom, adn=None):
+        self.nom = nom
+        self.adn = adn
+
+class EspeceHypothetique(Espece):
+    def __init__(self, nom, espece_fille1, espece_fille2):
+        super().__init__(nom)
+        self.especes_filles = [espece_fille1, espece_fille2]
 
 def distance_adn(adn1, adn2):
 

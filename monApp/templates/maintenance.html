@@ -58,12 +58,12 @@
                 <tr>
                     <td>{{ maintenance.plateforme }}</td>
                     <td>{{ maintenance.date_prevue }}</td>
-                    <td><span class="badge badge-{{ maintenance.statut_class }}">{{ maintenance.statut }}</span></td>
-                    <td>
-                        <a href="/maintenance/edit/{{ maintenance.id }}" class="btn-action btn-edit" title="Modifier">
+                    <td><span class="badge badge-primary">{{ maintenance.statut }}</span></td>
+                    <td class="actions">
+                        <a href="#" class="btn-action btn-edit disabled-link" title="Modifier (non implémenté)">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="/maintenance/delete/{{ maintenance.id }}" class="btn-action btn-delete" title="Supprimer">
+                        <a href="#" class="btn-action btn-delete disabled-link" title="Supprimer (non implémenté)">
                             <i class="fas fa-trash"></i>
                         </a>
                     </td>
@@ -78,7 +78,7 @@
     <div class="card-header">
         <h2 class="card-title">Planifier une Maintenance</h2>
     </div>
-    <form method="POST" action="/maintenance/add" class="personnel-form">
+    <form method="POST" action="#" class="personnel-form">
         <div class="form-row">
             <div class="form-group">
                 <label for="platform_select">Plateforme</label>
