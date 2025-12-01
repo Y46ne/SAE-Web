@@ -100,5 +100,6 @@ select:focus {
 
 .result pre {
     white-space: pre-wrap;
+    word-break: break-all;
     font-size: 14px;
 }

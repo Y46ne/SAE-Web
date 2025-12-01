@@ -18,12 +18,22 @@
         <nav>
             <ul class="sidebar-menu">
                 <li><a href="{{ url_for('tableau_de_bord') }}" class="{{ 'active' if 'tableau_de_bord' in request.endpoint else '' }}"><i class="fas fa-home"></i> Tableau de bord</a></li>
-                <li><a href="{{ url_for('campagnes') }}" class="{{ 'active' if 'campagnes' in request.endpoint else '' }}"><i class="fas fa-bullhorn"></i> Campagnes</a></li>
-                <li><a href="{{ url_for('personnel') }}" class="{{ 'active' if 'personnel' in request.endpoint else '' }}"><i class="fas fa-users"></i> Personnel</a></li>
-                <li><a href="{{ url_for('plateforme') }}" class="{{ 'active' if 'plateforme' in request.endpoint else '' }}"><i class="fas fa-cogs"></i> Plateformes</a></li>
-                <li><a href="{{ url_for('sequences_adn') }}" class="{{ 'active' if 'sequences_adn' in request.endpoint else '' }}"><i class="fas fa-dna"></i> Échantillons</a></li>
-                <li><a href="{{ url_for('budget') }}" class="{{ 'active' if 'budget' in request.endpoint else '' }}"><i class="fas fa-wallet"></i> Budgets</a></li>
-                <li><a href="{{ url_for('analyse') }}" class="{{ 'active' if 'analyse' in request.endpoint else '' }}"><i class="fas fa-chart-bar"></i> Analyse ADN</a></li>
+                {% if current_user.role.value in ['chercheur', 'admin'] %}
+                    <li><a href="{{ url_for('campagnes') }}" class="{{ 'active' if 'campagnes' in request.endpoint else '' }}"><i class="fas fa-bullhorn"></i> Campagnes</a></li>
+                {% endif %}
+                {% if current_user.role.value == 'admin' %}
+                    <li><a href="{{ url_for('personnel') }}" class="{{ 'active' if 'personnel' in request.endpoint else '' }}"><i class="fas fa-users"></i> Personnel</a></li>
+                {% endif %}
+                {% if current_user.role.value in ['admin', 'technique'] %}
+                    <li><a href="{{ url_for('plateforme') }}" class="{{ 'active' if 'plateforme' in request.endpoint else '' }}"><i class="fas fa-cogs"></i> Plateformes</a></li>
+                {% endif %}
+                {% if current_user.role.value in ['chercheur', 'admin'] %}
+                    <li><a href="{{ url_for('sequences_adn') }}" class="{{ 'active' if 'sequences_adn' in request.endpoint else '' }}"><i class="fas fa-dna"></i> Échantillons</a></li>
+                    <li><a href="{{ url_for('analyse') }}" class="{{ 'active' if 'analyse' in request.endpoint else '' }}"><i class="fas fa-chart-bar"></i> Analyse ADN</a></li>
+                {% endif %}
+                {% if current_user.role.value in ['direction', 'admin'] %}
+                    <li><a href="{{ url_for('budget') }}" class="{{ 'active' if 'budget' in request.endpoint else '' }}"><i class="fas fa-wallet"></i> Budgets</a></li>
+                {% endif %}
             </ul>
         </nav>
     </aside>
@@ -39,7 +49,7 @@
                 <div class="user-avatar">UN</div>
                 <div class="user-details">
                     <span class="user-name">{{ current_user.username }}</span>
-                    <span class="user-role">Chercheur</span>
+                    <span class="user-role">{{ current_user.role.value|capitalize }}</span>
                 </div>
                 <a href="{{ url_for('logout') }}" class="btn-logout" title="Déconnexion">
                     <i class="fas fa-sign-out-alt"></i>
@@ -48,8 +58,18 @@
         </header>
 
         <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
             {% block content %}{% endblock %}
         </div>
     </main>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -193,7 +193,7 @@ tbody tr:hover {
     align-items: end;
 }
 
-.form-group {
+.personnel-form .form-group {
     display: flex;
     flex-direction: column;
     gap: 6px;

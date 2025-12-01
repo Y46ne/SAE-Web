@@ -1,16 +1,30 @@
-from flask import render_template, request, url_for, redirect, flash, abort
+from flask import render_template, request, url_for, redirect, flash, abort, jsonify
 from hashlib import sha256
 from .app import app, db, login_manager
 from flask_login import login_user, logout_user, login_required, current_user
-from .models import User, Personnel, Habilitation, Plateforme, Campagne, Maintenance, Echantillon, Budget
-from .forms import LoginForm, RegisterForm, CampagneForm, BudgetForm
+from .models import User, Personnel, Habilitation, Plateforme, Campagne, Maintenance, Echantillon, Budget, UserRole
+from .forms import LoginForm, RegisterForm, CampagneForm, BudgetForm, PlateformeForm, EchantillonForm
 import random
 from source import algoADN, arbresPhylogenetiques, calculSimilarite, constantes
 from sqlalchemy import func
+from functools import wraps
+import os
+from werkzeug.utils import secure_filename
 
 # -------------------------------------------
 # GESTION DE SESSION UTILISATEUR ET AUTHENTIFICATION
 # -------------------------------------------
+
+def role_required(*roles):
+    """Décorateur pour restreindre l'accès à certains rôles."""
+    def wrapper(fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+            if not current_user.is_authenticated or current_user.role not in roles:
+                abort(403) # Forbidden
+            return fn(*args, **kwargs)
+        return decorated_view
+    return wrapper
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -95,6 +109,7 @@ def tableau_de_bord():
 
 @app.route('/personnel/', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.ADMIN)
 def personnel():
     if request.method == 'POST':
         nom = request.form.get('nom')
@@ -120,6 +135,7 @@ def personnel():
 
 @app.route('/delete_personnel/<int:personnel_id>', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.ADMIN)
 def delete_personnel(personnel_id):
     personne = Personnel.query.get_or_404(personnel_id)
     if request.method == 'POST':
@@ -132,6 +148,7 @@ def delete_personnel(personnel_id):
 
 @app.route('/edit_personnel/<int:personnel_id>', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.ADMIN)
 def edit_personnel(personnel_id):
     personne = Personnel.query.get_or_404(personnel_id)
     all_habilitations = Habilitation.query.all()
@@ -152,27 +169,43 @@ def edit_personnel(personnel_id):
 
 @app.route('/plateforme/')
 @login_required
+@role_required(UserRole.ADMIN, UserRole.TECHNIQUE) # Admin a déjà accès
 def plateforme():
     equipements = Plateforme.query.order_by(Plateforme.nom).all()
     return render_template('plateforme.html', equipements=equipements)
 
 @app.route('/plateforme/add', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.ADMIN)
 def add_plateforme():
-    if request.method == 'POST':
-        nom = request.form.get('nom')
-        if nom:
-            new_equipement = Plateforme(nom=nom, cout_journalier=0, nb_personnes_necessaires=0, intervalle_maintenance=30)
-            db.session.add(new_equipement)
-            db.session.commit()
-            flash(f"L'équipement '{nom}' a été ajouté.", 'success')
-            return redirect(url_for('plateforme'))
-        else:
-            flash("Le nom de l'équipement est obligatoire.", 'danger')
-    return render_template('add_plateforme.html')
+    form = PlateformeForm()
+    # Peuple les choix pour les habilitations
+    form.habilitations_requises.choices = [(h.idHab, h.nomHab) for h in Habilitation.query.order_by('nomHab').all()]
+
+    if form.validate_on_submit():
+        nouvelle_plateforme = Plateforme(
+            nom=form.nom.data,
+            nb_personnes_necessaires=form.nb_personnes_necessaires.data,
+            cout_journalier=form.cout_journalier.data,
+            intervalle_maintenance=form.intervalle_maintenance.data
+        )
+
+        # Ajoute les habilitations sélectionnées
+        for hab_id in form.habilitations_requises.data:
+            habilitation = Habilitation.query.get(hab_id)
+            if habilitation:
+                nouvelle_plateforme.habilitations_requises.append(habilitation)
+
+        db.session.add(nouvelle_plateforme)
+        db.session.commit()
+        flash("La plateforme a été ajoutée avec succès.", "success")
+        return redirect(url_for('plateforme'))
+
+    return render_template('add_plateforme.html', form=form)
 
 @app.route('/delete_plateforme/<int:equipement_id>', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.ADMIN)
 def delete_plateforme(equipement_id):
     equipement = Plateforme.query.get_or_404(equipement_id)
     if request.method == 'POST':
@@ -189,6 +222,7 @@ def delete_plateforme(equipement_id):
 
 @app.route('/campagnes/')
 @login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN) # Admin a déjà accès
 def campagnes():
     query = Campagne.query
     search_term = request.args.get('search')
@@ -210,12 +244,19 @@ def campagnes():
 
 @app.route('/campagnes/add', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def add_campagne():
     form = CampagneForm()
-    form.plateforme.choices = [(p.idPl, p.nom) for p in Plateforme.query.order_by(Plateforme.nom).all()]
+    # On ajoute une option vide pour la sélection initiale
+    form.plateforme.choices = [(0, "Sélectionnez une plateforme...")] + [(p.idPl, p.nom) for p in Plateforme.query.order_by(Plateforme.nom).all()]
+    
+    # Le personnel est initialement vide, il sera chargé par JS
     form.personnel_implique.choices = [(pers.idPers, pers.nom) for pers in Personnel.query.order_by(Personnel.nom).all()]
 
     if form.validate_on_submit():
+        if not form.plateforme.data:
+            flash("Veuillez sélectionner une plateforme.", "danger")
+            return render_template('add_campagne.html', form=form)
         plateforme_selectionnee = Plateforme.query.get(form.plateforme.data)
         personnel_selectionne = [Personnel.query.get(id) for id in form.personnel_implique.data]
 
@@ -237,8 +278,31 @@ def add_campagne():
     
     return render_template('add_campagne.html', form=form)
 
+@app.route('/api/personnel_for_plateforme/<int:plateforme_id>')
+@login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN) # Admin a déjà accès
+def personnel_for_plateforme(plateforme_id):
+    """
+    API endpoint to get personnel qualified for a given platform.
+    """
+    plateforme = Plateforme.query.get_or_404(plateforme_id)
+    habilitations_requises_ids = {hab.idHab for hab in plateforme.habilitations_requises}
+
+    if not habilitations_requises_ids:
+        # Si aucune habilitation n'est requise, tout le monde est qualifié
+        personnel_qualifie = Personnel.query.order_by(Personnel.nom).all()
+    else:
+        # Filtre le personnel qui a TOUTES les habilitations requises
+        personnel_qualifie = [
+            p for p in Personnel.query.all() 
+            if habilitations_requises_ids.issubset({hab.idHab for hab in p.habilitations})
+        ]
+
+    return jsonify([{'id': p.idPers, 'nom': p.nom} for p in personnel_qualifie])
+
 @app.route('/campagnes/edit/<int:campagne_id>', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def edit_campagne(campagne_id):
     campagne = Campagne.query.get_or_404(campagne_id)
     form = CampagneForm(obj=campagne)
@@ -275,6 +339,7 @@ def edit_campagne(campagne_id):
 
 @app.route('/campagnes/delete/<int:campagne_id>', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def delete_campagne(campagne_id):
     campagne = Campagne.query.get_or_404(campagne_id)
     if request.method == 'POST':
@@ -289,12 +354,86 @@ def delete_campagne(campagne_id):
 
 @app.route('/sequences_adn/', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def sequences_adn():
-    if request.method == 'POST':
-        flash('Ajout de séquence non implémenté.', 'info')
+    form = EchantillonForm()
+    form.campagne.choices = [(c.idCamp, c.nom) for c in Campagne.query.order_by(Campagne.nom).all()]
+
+    if form.validate_on_submit():
+        fichier = form.fichier_sequence.data
+        if fichier:
+            # Sécurise le nom du fichier et le sauvegarde
+            filename = secure_filename(fichier.filename)
+            upload_folder = app.config['UPLOAD_FOLDER']
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+            fichier.save(os.path.join(upload_folder, filename))
+
+            # Crée le nouvel échantillon dans la base de données
+            nouvel_echantillon = Echantillon(
+                fichier_sequence=filename,
+                commentaire=form.commentaire.data,
+                idCamp=form.campagne.data
+            )
+            db.session.add(nouvel_echantillon)
+            db.session.commit()
+            flash(f"L'échantillon '{filename}' a été ajouté avec succès.", 'success')
+        else:
+            flash("Aucun fichier n'a été sélectionné.", 'danger')
+        
         return redirect(url_for('sequences_adn'))
-    # ...
-    return render_template('sequences_adn.html', sequences=[])
+
+    # Logique d'affichage (GET)
+    query = Echantillon.query
+    sequences = query.order_by(Echantillon.idEch.desc()).all()
+    all_campaigns = Campagne.query.order_by(Campagne.nom).all()
+    return render_template('sequences_adn.html', sequences=sequences, form=form, all_campaigns=all_campaigns)
+
+@app.route('/sequences_adn/delete/<int:echantillon_id>', methods=['GET', 'POST'])
+@login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
+def delete_echantillon(echantillon_id):
+    echantillon = Echantillon.query.get_or_404(echantillon_id)
+
+    if request.method == 'POST':
+        filename = echantillon.fichier_sequence
+        
+        # Supprimer le fichier physique
+        try:
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            flash(f"Erreur lors de la suppression du fichier : {e}", "danger")
+
+        db.session.delete(echantillon)
+        db.session.commit()
+        flash(f"L'échantillon '{filename}' a été supprimé avec succès.", 'success')
+        return redirect(url_for('sequences_adn'))
+
+    return render_template('delete_echantillon.html', echantillon=echantillon)
+
+@app.route('/sequences_adn/view/<int:echantillon_id>')
+@login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
+def view_echantillon(echantillon_id):
+    echantillon = Echantillon.query.get_or_404(echantillon_id)
+    sequence_content = ""
+    error_message = None
+
+    try:
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], echantillon.fichier_sequence)
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                sequence_content = f.read()
+        else:
+            error_message = f"Le fichier '{echantillon.fichier_sequence}' est introuvable sur le serveur."
+            flash(error_message, 'danger')
+    except Exception as e:
+        error_message = f"Erreur lors de la lecture du fichier : {e}"
+        flash(error_message, 'danger')
+
+    return render_template('view_echantillon.html', echantillon=echantillon, sequence_content=sequence_content, error_message=error_message)
 
 # -------------------------------------------
 # ROUTES POUR L'ANALYSE (BUDGET ET ADN)
@@ -302,6 +441,7 @@ def sequences_adn():
 
 @app.route('/budget/', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.DIRECTION, UserRole.ADMIN)
 def budget():
     form = BudgetForm()
     if form.validate_on_submit():
@@ -319,11 +459,14 @@ def budget():
 
 @app.route('/analyse/', methods=['GET', 'POST'])
 @login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def analyse():
     results = request.args.to_dict()
     return render_template('analyse.html', **results)
 
 @app.route('/analyse/generate', methods=['POST'])
+@login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def analyse_generate():
     try:
         length = int(request.form.get('length', 0))
@@ -338,6 +481,8 @@ def analyse_generate():
         return redirect(url_for('analyse'))
 
 @app.route('/analyse/mutate', methods=['POST'])
+@login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def analyse_mutate():
     sequence = request.form.get('sequence_to_mutate', '').upper()
     mutation_rate = request.form.get('mutation_rate', '0.1')
@@ -352,6 +497,8 @@ def analyse_mutate():
         return redirect(url_for('analyse'))
 
 @app.route('/analyse/levenshtein', methods=['POST'])
+@login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def analyse_levenshtein():
     seq1 = request.form.get('seq1', '').upper()
     seq2 = request.form.get('seq2', '').upper()
@@ -363,6 +510,8 @@ def analyse_levenshtein():
     return redirect(url_for('analyse', distance=distance, seq1_lev=seq1, seq2_lev=seq2))
 
 @app.route('/analyse/align', methods=['POST'])
+@login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def analyse_align():
     seq1 = request.form.get('seq1_align', '').upper()
     seq2 = request.form.get('seq2_align', '').upper()
@@ -374,6 +523,8 @@ def analyse_align():
     return redirect(url_for('analyse', aligned_seq1=aligned_seq1, aligned_seq2=aligned_seq2))
 
 @app.route('/analyse/tree', methods=['POST'])
+@login_required
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def analyse_tree():
     sequences_text = request.form.get('sequences_tree', '')
     if not sequences_text:

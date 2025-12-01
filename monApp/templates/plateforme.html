@@ -3,7 +3,7 @@
 {% block title %}Plateforme Technique{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/plateforme.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/plateforme.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -22,6 +22,9 @@
             <thead>
                 <tr>
                     <th>Nom de l'équipement</th>
+                    <th>Coût / jour</th>
+                    <th>Pers. requises</th>
+                    <th>Habilitations requises</th>
                     <th>Statut</th>
                     <th>Actions</th>
                 </tr>
@@ -30,6 +33,15 @@
                 {% for equipement in equipements %}
                 <tr>
                     <td>{{ equipement.nom }}</td>
+                    <td>{{ "%.2f"|format(equipement.cout_journalier) }} €</td>
+                    <td>{{ equipement.nb_personnes_necessaires }}</td>
+                    <td>
+                        {% for hab in equipement.habilitations_requises %}
+                            <span class="badge badge-habilitation">{{ hab.nomHab }}</span>
+                        {% else %}
+                            <span class="text-muted">Aucune</span>
+                        {% endfor %}
+                    </td>
                     <td><span class="badge badge-{{ equipement.statut_class }}">{{ equipement.statut }}</span></td>
                     <td class="actions">
                         <a href="{{ url_for('delete_plateforme', equipement_id=equipement.idPl) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Supprimer</a>

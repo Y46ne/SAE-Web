@@ -3,7 +3,7 @@
 {% block title %}Tableau de bord - Dashboard{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/tableau_de_bord.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tableau_de_bord.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -76,11 +76,6 @@
     <div class="card">
         <div class="card-header">
             <h2 class="card-title">Utilisation Budget</h2>
-            <select class="btn btn-primary" style="padding: 0.5rem 1rem;">
-                <option>Ce mois</option>
-                <option>Ce trimestre</option>
-                <option>Cette année</option>
-            </select>
         </div>
         <ul class="budget-summary-list">
             {% for i in range(budget_chart_data.labels|length) %}
@@ -108,58 +103,4 @@
         </ul>
     </div>
 </div>
-
-<div class="content-grid">
-    <div class="card activity-section">
-        <div class="card-header">
-            <h2 class="card-title">Activité Récente</h2>
-            <a href="/activity" style="color: var(--primary); text-decoration: none; font-weight: 600;">
-                Voir tout <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        <ul class="activity-list">
-            <li class="activity-item">
-                <div class="activity-icon blue">
-                    <i class="fas fa-bullhorn"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Nouvelle campagne créée</h4>
-                    <p>La campagne "Promotion Black Friday" a été créée avec succès</p>
-                </div>
-                <span class="activity-time">Il y a 2 heures</span>
-            </li>
-            <li class="activity-item">
-                <div class="activity-icon green">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Campagne terminée</h4>
-                    <p>"Campagne Été 2024" s'est terminée avec 12 500 impressions</p>
-                </div>
-                <span class="activity-time">Il y a 5 heures</span>
-            </li>
-            <li class="activity-item">
-                <div class="activity-icon pink">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Alerte budget</h4>
-                    <p>Le budget de "Lancement Produit X" a atteint 80%</p>
-                </div>
-                <span class="activity-time">Hier</span>
-            </li>
-            <li class="activity-item">
-                <div class="activity-icon blue">
-                    <i class="fas fa-vial"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Nouveaux échantillons</h4>
-                    <p>15 nouveaux échantillons ont été ajoutés à l'inventaire</p>
-                </div>
-                <span class="activity-time">Il y a 2 jours</span>
-            </li>
-        </ul>
-    </div>
-</div>
-
 {% endblock %}

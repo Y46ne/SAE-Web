@@ -1,7 +1,17 @@
-# Données des utilisateurs (Admin)
+# Données des utilisateurs
 users:
   - username: "admin"
-    password: "password123"
+    password: "password"
+    role: "admin"
+  - username: "direction"
+    password: "password"
+    role: "direction"
+  - username: "technique"
+    password: "password"
+    role: "technique"
+  - username: "chercheur"
+    password: "password"
+    role: "chercheur"
 
 # Données Habilitations
 habilitations:

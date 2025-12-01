@@ -6,6 +6,7 @@ app = Flask(__name__,
             static_folder='static',
             template_folder='templates')
 app.config.from_object('config')
+app.config['UPLOAD_FOLDER'] = 'monApp/uploads'
 
 db = SQLAlchemy()
 db.init_app(app)

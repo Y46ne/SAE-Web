@@ -2,8 +2,8 @@ import click
 import yaml
 from .app import app, db
 from hashlib import sha256
-from datetime import datetime, date
-from .models import User, Plateforme, Personnel, Budget, Habilitation, Campagne, Echantillon, Maintenance
+from datetime import datetime
+from .models import User, Plateforme, Personnel, Budget, Habilitation, Campagne, Echantillon, Maintenance, UserRole
 import os
 from sqlalchemy import text
 
@@ -16,48 +16,42 @@ def loaddb(filename):
     db.create_all()
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    sql_path = os.path.join('data', 'trigger.sql')
+    sql_path = os.path.join(current_dir, 'data', 'trigger.sql')
     
-    if os.path.exists(sql_path):
-        try:
-            with open(sql_path, 'r', encoding='utf-8') as f:
-                content = f.read()
+    with open(sql_path, 'r', encoding='utf-8') as f:
+        content = f.read()
 
-            with db.engine.connect() as connection:
-                commands = content.split('|')
+    with db.engine.connect() as connection:
+        commands = content.split('|')
 
-                for command in commands:
-                    cmd = command.strip()
+        for command in commands:
+            cmd = command.strip()
 
-                    if cmd and "CREATE" in cmd.upper():
-                        
-                        cmd = cmd.replace("DELIMITER", "").strip()
-                        
-                        print(f"Exécution d'un trigger...")
-                        try:
-                            connection.execute(text(cmd))
-                        except Exception as e:
-                            print(f"Erreur sur ce trigger : {e}")
+            if cmd and "CREATE" in cmd.upper():
+                
+                cmd = cmd.replace("DELIMITER", "").strip()
+                
+                print(f"Exécution d'un trigger...")
+                try:
+                    connection.execute(text(cmd))
+                except Exception as e:
+                    print(f"Erreur sur ce trigger : {e}")
 
-                connection.commit()
-
-        except Exception as e:
-            print(f"Erreur SQL : {e}")
-    else:
-        print("Pas de fichier triggers.sql trouvé.")
+        connection.commit()
 
     with open(filename, 'r', encoding='utf-8') as f:
         data = yaml.safe_load(f)
-
 
     # UTILISATEURS
     for u in data.get('users', []):
         if not User.query.filter_by(username=u['username']).first():
             m = sha256()
             m.update(u['password'].encode())
-            user = User(
+            user_role = UserRole(u.get('role', 'chercheur')) # Par défaut 'chercheur' si non spécifié
+            user = User( 
                 username=u['username'],
-                password=m.hexdigest()
+                password=m.hexdigest(),
+                role=user_role
             )
             db.session.add(user)
     db.session.commit()
@@ -193,7 +187,11 @@ def newuser(username, password):
     from hashlib import sha256
     m = sha256()
     m.update(password.encode())
-    user = User(username=username, password=m.hexdigest())
+    # On assigne le rôle 'chercheur' par défaut, comme dans le modèle
+    user = User(
+        username=username, 
+        password=m.hexdigest(),
+        role=UserRole.CHERCHEUR)
     db.session.add(user)
     db.session.commit()
     print(f"Utilisateur {username} créé avec succès.")
