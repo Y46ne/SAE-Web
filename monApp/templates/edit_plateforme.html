@@ -8,28 +8,44 @@
 
 {% block content %}
 <div class="page-title">
-    <h1>Modifier un équipement</h1>
-    <p>Mise à jour des informations de <strong>{{ equipement.nom }}</strong></p>
+    <h1>Modifier l'équipement</h1>
+    <p>Mettre à jour les informations de l'équipement : {{ equipement.nom }}.</p>
 </div>
 
 <div class="card form-card">
     <div class="card-header">
-        <h2 class="card-title">Éditer les informations</h2>
+        <h2 class="card-title">Édition</h2>
     </div>
-    <form method="POST" action="">
+    <form method="POST" action="{{ url_for('edit_plateforme', equipement_id=equipement.idPl) }}">
+        {{ form.hidden_tag() }}
         <div class="form-group">
-            <label for="nom">Nom de l'équipement</label>
-            <input type="text" id="nom" name="nom" value="{{ equipement.nom }}" required>
+            {{ form.nom.label(for="nom") }}
+            {{ form.nom(id="nom", placeholder="Ex: Séquenceur ADN Pro", required=True) }}
         </div>
-        
         <div class="form-group">
-            <label for="statut">Statut</label>
-            <select id="statut" name="statut">
-                <option value="Opérationnel" {% if equipement.statut == 'Opérationnel' %}selected{% endif %}>Opérationnel</option>
-                <option value="En maintenance" {% if equipement.statut == 'En maintenance' %}selected{% endif %}>En maintenance</option>
-                <option value="Hors service" {% if equipement.statut == 'Hors service' %}selected{% endif %}>Hors service</option>
-            </select>
+            {{ form.nb_personnes_necessaires.label(for="nb_personnes_necessaires") }}
+            {{ form.nb_personnes_necessaires(id="nb_personnes_necessaires", min="1", required=True) }}
         </div>
+        <div class="form-group">
+            {{ form.cout_journalier.label(for="cout_journalier") }}
+            {{ form.cout_journalier(id="cout_journalier", min="0", step="0.01", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.intervalle_maintenance.label(for="intervalle_maintenance") }}
+            {{ form.intervalle_maintenance(id="intervalle_maintenance", min="1", required=True) }}
+        </div>
+        <div class="form-group">
+            <label>Habilitations requises</label>
+            <div class="checkbox-grid">
+                {% for subfield in form.habilitations_requises %}
+                    <div class="checkbox-item">
+                        {{ subfield(id=subfield.id, checked=subfield.data in form.habilitations_requises.data) }}
+                        {{ subfield.label(for=subfield.id) }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-save"></i> Enregistrer les modifications

@@ -61,3 +61,17 @@ def reconstruire_arbre(liste_especes_initiales):
     racine_arbre = especes_en_cours[0]
     print(f"\nArbre reconstruit ! Racine : {racine_arbre.nom}")
     return racine_arbre
+
+def afficher_arbre_text(noeud, prefixe="", est_dernier=True):
+    """Génère une représentation textuelle et hiérarchique de l'arbre."""
+    lignes = []
+    lignes.append(prefixe + ("└── " if est_dernier else "├── ") + noeud.nom)
+    
+    if hasattr(noeud, 'especes_filles'):
+        enfants = noeud.especes_filles
+        nouveau_prefixe = prefixe + ("    " if est_dernier else "│   ")
+        for i, enfant in enumerate(enfants):
+            est_le_dernier_enfant = (i == len(enfants) - 1)
+            lignes.extend(afficher_arbre_text(enfant, nouveau_prefixe, est_le_dernier_enfant))
+            
+    return lignes

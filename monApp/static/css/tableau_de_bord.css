@@ -1,12 +1,11 @@
-/* --- Style de base --- */
 body {
-    background: #f2f2f2;      /* Gris clair pour le fond */
-    color: #333333;           /* Gris foncé pour le texte */
+    background: #f2f2f2;     
+    color: #333333;           
     font-family: Arial, sans-serif;
     line-height: 1.5;
 }
 
-/* --- Grilles --- */
+
 .stats-grid, .content-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -14,7 +13,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* --- Cartes --- */
+
 .stat-card, .card {
     background: #ffffff;
     border: 1px solid #ddd;
@@ -25,15 +24,14 @@ body {
 }
 
 .stat-card:hover, .card:hover {
-    border-color: #5677ff;      /* Bleu uniforme */
+    border-color: #5677ff;      
     transform: translateY(-2px);
 }
 
-/* --- Typographie Stats --- */
 .stat-value {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #5677ff;             /* Bleu simple */
+    color: #5677ff;
     margin: 10px 0;
 }
 
@@ -51,14 +49,12 @@ body {
     font-size: 1.8rem;
 }
 
-/* --- Tableaux --- */
 .table-container { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; text-align: left; }
 th { color: #555555; padding: 12px; border-bottom: 2px solid #ddd; }
 td { padding: 12px; border-bottom: 1px solid #ddd; }
 tr:hover { background-color: #f9f9f9; }
 
-/* --- Badges --- */
 .badge {
     padding: 4px 10px;
     border-radius: 20px;
@@ -71,7 +67,6 @@ tr:hover { background-color: #f9f9f9; }
 .badge-warning { color: #d97706; background: #fef3c7; }
 .badge-danger  { color: #dc2626; background: #fee2e2; }
 
-/* --- Liste d'activité --- */
 .activity-list { list-style: none; padding: 0; }
 .activity-item {
     display: flex;

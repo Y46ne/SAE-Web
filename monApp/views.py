@@ -2,11 +2,11 @@ from flask import render_template, request, url_for, redirect, flash, abort, jso
 from hashlib import sha256
 from .app import app, db, login_manager
 from flask_login import login_user, logout_user, login_required, current_user
-from .models import User, Personnel, Habilitation, Plateforme, Campagne, Maintenance, Echantillon, Budget, UserRole
-from .forms import LoginForm, RegisterForm, CampagneForm, BudgetForm, PlateformeForm, EchantillonForm
+from .models import User, Personnel, Habilitation, Plateforme, Campagne, Echantillon, Budget, UserRole, Maintenance, MaintenanceStatus
+from .forms import LoginForm, RegisterForm, CampagneForm, BudgetForm, PlateformeForm, EchantillonForm, MaintenanceForm
 import random
-from source import algoADN, arbresPhylogenetiques, calculSimilarite, constantes
-from sqlalchemy import func
+from source import algoADN, arbresPhylogenetiques, calculSimilarite
+from sqlalchemy import func, extract
 from functools import wraps
 import os
 from werkzeug.utils import secure_filename
@@ -21,7 +21,7 @@ def role_required(*roles):
         @wraps(fn)
         def decorated_view(*args, **kwargs):
             if not current_user.is_authenticated or current_user.role not in roles:
-                abort(403) # Forbidden
+                abort(403)
             return fn(*args, **kwargs)
         return decorated_view
     return wrapper
@@ -44,18 +44,41 @@ def login():
     return render_template('login.html', form=form)
 
 @app.route('/creer_compte', methods=['GET', 'POST'])
+@login_required
+@role_required(UserRole.ADMIN, UserRole.DIRECTION)
 def creer_compte():
     form = RegisterForm()
+    
+    if current_user.role == UserRole.ADMIN:
+        form.role.choices = [
+            (UserRole.DIRECTION.value, 'Direction'),
+            (UserRole.TECHNIQUE.value, 'Technicien'),
+            (UserRole.CHERCHEUR.value, 'Chercheur')
+        ]
+    elif current_user.role == UserRole.DIRECTION:
+        form.role.choices = [
+            (UserRole.TECHNIQUE.value, 'Technicien'),
+            (UserRole.CHERCHEUR.value, 'Chercheur')
+        ]
+    else:
+        form.role.choices = []
+
     if form.validate_on_submit():
         hashed_password = sha256(form.password.data.encode()).hexdigest()
+        
+        selected_role_value = form.role.data
+        selected_role = UserRole(selected_role_value)
+
         new_user = User(
             username=form.username.data,
-            password=hashed_password
+            password=hashed_password,
+            role=selected_role
         )
         db.session.add(new_user)
         db.session.commit()
-        flash('Votre compte a été créé avec succès ! Vous pouvez maintenant vous connecter.', 'success')
-        return redirect(url_for('login'))
+        flash('Le compte a été créé avec succès !', 'success')
+        return redirect(url_for('index'))
+        
     return render_template('creer_compte.html', form=form)
 
 @app.route('/logout')
@@ -85,12 +108,10 @@ def tableau_de_bord():
         'total_samples': Echantillon.query.count()
     }
     
-    # Filtrer les campagnes "En cours" en Python, car 'statut' est une propriété
     all_campaigns = Campagne.query.order_by(Campagne.date_debut.desc()).all()
     active_campaigns = [c for c in all_campaigns if c.statut == 'En cours'][:5]
     stats['active_campaigns'] = len(active_campaigns)
 
-    # Prepare data for the budget chart
     budgets_for_chart = Budget.query.order_by(Budget.mois.asc()).all()
     
     budget_chart_data = {
@@ -125,7 +146,7 @@ def personnel():
                     new_personnel.habilitations.append(hab)
             db.session.add(new_personnel)
             db.session.commit()
-            db.session.refresh(new_personnel) # Rafraîchir l'objet pour charger les relations
+            db.session.refresh(new_personnel) 
             flash(f"Le membre du personnel '{nom}' a été ajouté avec succès.", "success")
         return redirect(url_for('personnel'))
 
@@ -169,17 +190,16 @@ def edit_personnel(personnel_id):
 
 @app.route('/plateforme/')
 @login_required
-@role_required(UserRole.ADMIN, UserRole.TECHNIQUE) # Admin a déjà accès
+@role_required(UserRole.ADMIN, UserRole.TECHNIQUE)
 def plateforme():
     equipements = Plateforme.query.order_by(Plateforme.nom).all()
     return render_template('plateforme.html', equipements=equipements)
 
 @app.route('/plateforme/add', methods=['GET', 'POST'])
 @login_required
-@role_required(UserRole.ADMIN)
+@role_required(UserRole.ADMIN, UserRole.TECHNIQUE)
 def add_plateforme():
     form = PlateformeForm()
-    # Peuple les choix pour les habilitations
     form.habilitations_requises.choices = [(h.idHab, h.nomHab) for h in Habilitation.query.order_by('nomHab').all()]
 
     if form.validate_on_submit():
@@ -190,7 +210,6 @@ def add_plateforme():
             intervalle_maintenance=form.intervalle_maintenance.data
         )
 
-        # Ajoute les habilitations sélectionnées
         for hab_id in form.habilitations_requises.data:
             habilitation = Habilitation.query.get(hab_id)
             if habilitation:
@@ -203,9 +222,39 @@ def add_plateforme():
 
     return render_template('add_plateforme.html', form=form)
 
+@app.route('/plateforme/edit/<int:equipement_id>', methods=['GET', 'POST'])
+@login_required
+@role_required(UserRole.ADMIN, UserRole.TECHNIQUE)
+def edit_plateforme(equipement_id):
+    equipement = Plateforme.query.get_or_404(equipement_id)
+    form = PlateformeForm(obj=equipement)
+    form.habilitations_requises.choices = [(h.idHab, h.nomHab) for h in Habilitation.query.order_by('nomHab').all()]
+
+    if request.method == 'POST' and form.validate_on_submit():
+        equipement.nom = form.nom.data
+        equipement.nb_personnes_necessaires = form.nb_personnes_necessaires.data
+        equipement.cout_journalier = form.cout_journalier.data
+        equipement.intervalle_maintenance = form.intervalle_maintenance.data
+
+        # Supprimer les habilitations existantes et ajouter les nouvelles
+        equipement.habilitations_requises.clear()
+        for hab_id in form.habilitations_requises.data:
+            habilitation = Habilitation.query.get(hab_id)
+            if habilitation:
+                equipement.habilitations_requises.append(habilitation)
+        
+        db.session.commit()
+        flash(f"L'équipement '{equipement.nom}' a été mis à jour.", "success")
+        return redirect(url_for('plateforme'))
+
+    if request.method == 'GET':
+        form.habilitations_requises.data = [h.idHab for h in equipement.habilitations_requises]
+
+    return render_template('edit_plateforme.html', form=form, equipement=equipement)
+
 @app.route('/delete_plateforme/<int:equipement_id>', methods=['GET', 'POST'])
 @login_required
-@role_required(UserRole.ADMIN)
+@role_required(UserRole.ADMIN, UserRole.TECHNIQUE)
 def delete_plateforme(equipement_id):
     equipement = Plateforme.query.get_or_404(equipement_id)
     if request.method == 'POST':
@@ -217,12 +266,54 @@ def delete_plateforme(equipement_id):
     return render_template('delete_plateforme.html', equipement=equipement)
 
 # -------------------------------------------
+# GESTION DE LA MAINTENANCE
+# -------------------------------------------
+
+@app.route('/maintenance/')
+@login_required
+@role_required(UserRole.ADMIN, UserRole.TECHNIQUE)
+def maintenance():
+    maintenances = Maintenance.query.order_by(Maintenance.date_maintenance.desc()).all()
+    return render_template('maintenance.html', maintenances=maintenances)
+
+@app.route('/maintenance/add', methods=['GET', 'POST'])
+@login_required
+@role_required(UserRole.ADMIN, UserRole.TECHNIQUE)
+def add_maintenance():
+    form = MaintenanceForm()
+    form.plateforme.choices = [(p.idPl, p.nom) for p in Plateforme.query.order_by(Plateforme.nom).all()]
+
+    if form.validate_on_submit():
+        new_maintenance = Maintenance(
+            date_maintenance=form.date_maintenance.data,
+            duree=form.duree.data,
+            type_operation=form.type_operation.data,
+            idPl=form.plateforme.data
+        )
+        db.session.add(new_maintenance)
+        db.session.commit()
+        flash("La maintenance a été programmée avec succès.", "success")
+        return redirect(url_for('maintenance'))
+
+    return render_template('add_maintenance.html', form=form)
+
+@app.route('/maintenance/validate/<int:maintenance_id>', methods=['POST'])
+@login_required
+@role_required(UserRole.ADMIN, UserRole.TECHNIQUE)
+def validate_maintenance(maintenance_id):
+    maintenance = Maintenance.query.get_or_404(maintenance_id)
+    maintenance.statut = MaintenanceStatus.TERMINEE
+    db.session.commit()
+    flash(f"La maintenance pour '{maintenance.plateforme.nom}' a été marquée comme terminée.", "success")
+    return redirect(url_for('maintenance'))
+
+# -------------------------------------------
 # GESTION DES CAMPAGNES
 # -------------------------------------------
 
 @app.route('/campagnes/')
 @login_required
-@role_required(UserRole.CHERCHEUR, UserRole.ADMIN) # Admin a déjà accès
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN) 
 def campagnes():
     query = Campagne.query
     search_term = request.args.get('search')
@@ -232,9 +323,6 @@ def campagnes():
         query = query.filter(Campagne.nom.ilike(f'%{search_term}%'))
 
     if status_filter:
-        # This requires the status property to work with the query, which it doesn't directly.
-        # A more complex solution would be needed for DB-level filtering.
-        # For now, we filter in Python after fetching.
         all_campagnes = query.order_by(Campagne.date_debut.desc()).all()
         campagnes_list = [c for c in all_campagnes if c.statut.lower().replace(' ', '_') == status_filter]
     else:
@@ -247,17 +335,97 @@ def campagnes():
 @role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def add_campagne():
     form = CampagneForm()
-    # On ajoute une option vide pour la sélection initiale
     form.plateforme.choices = [(0, "Sélectionnez une plateforme...")] + [(p.idPl, p.nom) for p in Plateforme.query.order_by(Plateforme.nom).all()]
     
-    # Le personnel est initialement vide, il sera chargé par JS
     form.personnel_implique.choices = [(pers.idPers, pers.nom) for pers in Personnel.query.order_by(Personnel.nom).all()]
 
     if form.validate_on_submit():
         if not form.plateforme.data:
             flash("Veuillez sélectionner une plateforme.", "danger")
             return render_template('add_campagne.html', form=form)
+
         plateforme_selectionnee = Plateforme.query.get(form.plateforme.data)
+        
+        # Logique de vérification du budget
+        campaign_date = form.date_debut.data
+        campaign_month = campaign_date.month
+        campaign_year = campaign_date.year
+        
+        budget = Budget.query.filter(
+            extract('month', Budget.mois) == campaign_month,
+            extract('year', Budget.mois) == campaign_year
+        ).first()
+
+        if not budget:
+            flash(f"Aucun budget n'est défini pour {campaign_date.strftime('%B %Y')}. Impossible de planifier la campagne.", "danger")
+            return render_template('add_campagne.html', form=form)
+
+        new_campaign_cost = plateforme_selectionnee.cout_journalier * form.duree.data
+
+        campaigns_in_month = Campagne.query.filter(
+            extract('month', Campagne.date_debut) == campaign_month,
+            extract('year', Campagne.date_debut) == campaign_year
+        ).all()
+
+        spent_in_month = sum(c.plateforme.cout_journalier * c.duree for c in campaigns_in_month if c.plateforme)
+
+        if spent_in_month + new_campaign_cost > budget.montant:
+            remaining_budget = budget.montant - spent_in_month
+            flash(f"Le coût de la campagne ({new_campaign_cost}€) dépasse le budget restant ({remaining_budget}€) pour {campaign_date.strftime('%B %Y')}.", "danger")
+            return render_template('add_campagne.html', form=form)
+
+        # Fin de la logique de vérification du budget
+
+        # Vérifier la disponibilité de la plateforme et du personnel
+        from datetime import timedelta
+        date_debut_nouvelle = form.date_debut.data
+        date_fin_nouvelle = date_debut_nouvelle + timedelta(days=form.duree.data)
+
+        # 1. Vérifier le conflit de plateforme
+        campagnes_existantes_plateforme = Campagne.query.filter_by(idPl=plateforme_selectionnee.idPl).all()
+        for campagne_existante in campagnes_existantes_plateforme:
+            date_debut_existante = campagne_existante.date_debut
+            date_fin_existante = date_debut_existante + timedelta(days=campagne_existante.duree)
+            if max(date_debut_nouvelle, date_debut_existante) < min(date_fin_nouvelle, date_fin_existante):
+                flash(f"La plateforme '{plateforme_selectionnee.nom}' est déjà réservée pour la période du {date_debut_existante.strftime('%d/%m/%Y')} au {date_fin_existante.strftime('%d/%m/%Y')}.", "danger")
+                return render_template('add_campagne.html', form=form)
+
+        # 2. Vérifier le conflit de personnel
+        personnel_selectionne_ids = form.personnel_implique.data
+        for pers_id in personnel_selectionne_ids:
+            personnel = Personnel.query.get(pers_id)
+            for campagne_existante in personnel.campagnes:
+                date_debut_existante = campagne_existante.date_debut
+                date_fin_existante = date_debut_existante + timedelta(days=campagne_existante.duree)
+                if max(date_debut_nouvelle, date_debut_existante) < min(date_fin_nouvelle, date_fin_existante):
+                    flash(f"Le membre du personnel '{personnel.nom}' est déjà occupé sur une autre campagne durant cette période (du {date_debut_existante.strftime('%d/%m/%Y')} au {date_fin_existante.strftime('%d/%m/%Y')}).", "danger")
+                    return render_template('add_campagne.html', form=form)
+
+        # 3. Vérifier l'intervalle de maintenance
+        derniere_maintenance = Maintenance.query.filter_by(idPl=plateforme_selectionnee.idPl, statut=MaintenanceStatus.TERMINEE).order_by(Maintenance.date_maintenance.desc()).first()
+        
+        if derniere_maintenance:
+            intervalle = timedelta(days=plateforme_selectionnee.intervalle_maintenance)
+            date_expiration_maintenance = derniere_maintenance.date_maintenance + intervalle
+
+            if date_fin_nouvelle > date_expiration_maintenance:
+                # Vérifier si une maintenance future est déjà planifiée avant le début de la nouvelle campagne
+                maintenance_future_prevue = Maintenance.query.filter(
+                    Maintenance.idPl == plateforme_selectionnee.idPl,
+                    Maintenance.statut == MaintenanceStatus.PREVUE,
+                    Maintenance.date_maintenance < date_debut_nouvelle
+                ).first()
+
+                if not maintenance_future_prevue:
+                    flash(f"L'intervalle de maintenance pour la plateforme '{plateforme_selectionnee.nom}' sera dépassé. "
+                          f"Une maintenance doit être planifiée avant le {date_debut_nouvelle.strftime('%d/%m/%Y')} pour continuer.", "danger")
+                    return render_template('add_campagne.html', form=form)
+        else:
+            # Si aucune maintenance n'a jamais été effectuée, nous ne pouvons pas évaluer l'intervalle.
+            flash(f"Aucune maintenance terminée n'est enregistrée pour la plateforme '{plateforme_selectionnee.nom}'. "
+                  f"Impossible de vérifier l'intervalle de maintenance.", "danger")
+            return render_template('add_campagne.html', form=form)
+
         personnel_selectionne = [Personnel.query.get(id) for id in form.personnel_implique.data]
 
         new_campagne = Campagne(
@@ -280,24 +448,26 @@ def add_campagne():
 
 @app.route('/api/personnel_for_plateforme/<int:plateforme_id>')
 @login_required
-@role_required(UserRole.CHERCHEUR, UserRole.ADMIN) # Admin a déjà accès
+@role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def personnel_for_plateforme(plateforme_id):
     """
-    API endpoint to get personnel qualified for a given platform.
+    Point de terminaison de l'API pour obtenir le personnel qualifié pour une plateforme donnée.
     """
     plateforme = Plateforme.query.get_or_404(plateforme_id)
     habilitations_requises_ids = {hab.idHab for hab in plateforme.habilitations_requises}
 
     if not habilitations_requises_ids:
-        # Si aucune habilitation n'est requise, tout le monde est qualifié
         personnel_qualifie = Personnel.query.order_by(Personnel.nom).all()
     else:
-        # Filtre le personnel qui a TOUTES les habilitations requises
-        personnel_qualifie = [
-            p for p in Personnel.query.all() 
-            if habilitations_requises_ids.issubset({hab.idHab for hab in p.habilitations})
-        ]
-
+        personnel_qualifie = []
+        for p in Personnel.query.all():
+            personnel_habilitations_ids = set()
+            for hab in p.habilitations:
+                personnel_habilitations_ids.add(hab.idHab)
+            
+            if habilitations_requises_ids.issubset(personnel_habilitations_ids):
+                personnel_qualifie.append(p)
+                
     return jsonify([{'id': p.idPers, 'nom': p.nom} for p in personnel_qualifie])
 
 @app.route('/campagnes/edit/<int:campagne_id>', methods=['GET', 'POST'])
@@ -311,7 +481,7 @@ def edit_campagne(campagne_id):
     form.personnel_implique.choices = [(p.idPers, p.nom) for p in Personnel.query.order_by(Personnel.nom).all()]
 
     if request.method == 'GET':
-        form.personnel_implique.data = [p.idPers for p in campagne.personnel_implique] # Déjà correct, mais je vérifie
+        form.personnel_implique.data = [p.idPers for p in campagne.personnel_implique]
         form.plateforme.data = campagne.idPl
 
 
@@ -329,7 +499,6 @@ def edit_campagne(campagne_id):
         flash(f"La campagne '{campagne.nom}' a été mise à jour.", 'success')
         return redirect(url_for('campagnes'))
 
-    # Pre-fill form data for GET request
     form.nom.data = campagne.nom
     form.date_debut.data = campagne.date_debut
     form.duree.data = campagne.duree
@@ -362,14 +531,12 @@ def sequences_adn():
     if form.validate_on_submit():
         fichier = form.fichier_sequence.data
         if fichier:
-            # Sécurise le nom du fichier et le sauvegarde
             filename = secure_filename(fichier.filename)
             upload_folder = app.config['UPLOAD_FOLDER']
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
             fichier.save(os.path.join(upload_folder, filename))
 
-            # Crée le nouvel échantillon dans la base de données
             nouvel_echantillon = Echantillon(
                 fichier_sequence=filename,
                 commentaire=form.commentaire.data,
@@ -383,7 +550,6 @@ def sequences_adn():
         
         return redirect(url_for('sequences_adn'))
 
-    # Logique d'affichage (GET)
     query = Echantillon.query
     sequences = query.order_by(Echantillon.idEch.desc()).all()
     all_campaigns = Campagne.query.order_by(Campagne.nom).all()
@@ -398,7 +564,6 @@ def delete_echantillon(echantillon_id):
     if request.method == 'POST':
         filename = echantillon.fichier_sequence
         
-        # Supprimer le fichier physique
         try:
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             if os.path.exists(file_path):
@@ -490,7 +655,8 @@ def analyse_mutate():
         flash("Une séquence est requise pour la mutation.", "danger")
         return redirect(url_for('analyse'))
     try:
-        mutated_sequence = algoADN.muter_complet(sequence, float(mutation_rate))
+        rate = float(mutation_rate)
+        mutated_sequence = algoADN.muter_complet(sequence, p_remplacement=rate, p_insertion=rate, p_delation=rate)
         return redirect(url_for('analyse', mutated_sequence=mutated_sequence, original_for_mutation=sequence))
     except (ValueError, TypeError):
         flash("Veuillez entrer un taux de mutation valide (ex: 0.1).", "danger")
@@ -526,15 +692,27 @@ def analyse_align():
 @login_required
 @role_required(UserRole.CHERCHEUR, UserRole.ADMIN)
 def analyse_tree():
-    sequences_text = request.form.get('sequences_tree', '')
-    if not sequences_text:
-        flash("Au moins deux séquences sont requises pour construire l'arbre.", "danger")
+    species_names = request.form.getlist('species-name')
+    species_sequences = request.form.getlist('species-sequence')
+
+    if len(species_names) < 2:
+        flash("Veuillez fournir au moins deux espèces pour construire l'arbre.", "danger")
         return redirect(url_for('analyse'))
     
-    sequences = [s.strip().upper() for s in sequences_text.splitlines() if s.strip()]
-    if len(sequences) < 2:
-        flash("Veuillez fournir au moins deux séquences valides.", "danger")
+    especes = []
+    original_sequences_text = []
+    for name, seq in zip(species_names, species_sequences):
+        if name.strip() and seq.strip():
+            especes.append(arbresPhylogenetiques.Espece(nom=name.strip(), adn=seq.strip().upper()))
+            original_sequences_text.append(f">{name.strip()}\n{seq.strip().upper()}")
+
+    if len(especes) < 2:
+        flash("Veuillez fournir au moins deux espèces valides avec un nom et une séquence.", "danger")
         return redirect(url_for('analyse'))
-        
-    newick_tree = arbresPhylogenetiques.construire_arbre(sequences)
-    return redirect(url_for('analyse', newick_tree=newick_tree, original_sequences_tree=sequences_text))
+
+    arbre_racine = arbresPhylogenetiques.reconstruire_arbre(especes)
+    
+    lignes_arbre = arbresPhylogenetiques.afficher_arbre_text(arbre_racine)
+    arbre_formate = "\n".join(lignes_arbre)
+    
+    return redirect(url_for('analyse', newick_tree=arbre_formate, original_sequences_tree="\n".join(original_sequences_text)))

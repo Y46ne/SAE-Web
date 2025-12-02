@@ -96,16 +96,16 @@ budgets:
     mois: "2025-10-01"
     montant: 50000.00
   - id: 2
-    mois: "2025-10-01"
+    mois: "2025-09-01"
     montant: 45000.00
   - id: 3
-    mois: "2025-10-01"
+    mois: "2025-08-01"
     montant: 60000.00
   - id: 4
-    mois: "2025-10-01"
+    mois: "2025-07-01"
     montant: 55000.00
   - id: 5
-    mois: "2025-10-01"
+    mois: "2025-06-01"
     montant: 48000.00
 
 # Données Campagnes

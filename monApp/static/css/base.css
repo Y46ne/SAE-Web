@@ -1,11 +1,9 @@
-/* Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Generic colors */
 body {
     font-family: Arial, sans-serif;
     background: #f2f2f2;
@@ -14,7 +12,6 @@ body {
     min-height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
     position: fixed;
     left: 0;
@@ -78,7 +75,6 @@ body {
     text-align: center;
 }
 
-/* Main content */
 .main-content {
     margin-left: 240px;
     min-height: 100vh;
@@ -131,7 +127,6 @@ body {
     padding: 20px;
 }
 
-/* Page title */
 .page-title {
     margin-bottom: 20px;
 }
@@ -146,7 +141,6 @@ body {
     color: #777;
 }
 
-/* Buttons */
 .btn {
     padding: 8px 14px;
     border-radius: 4px;
@@ -169,7 +163,6 @@ body {
     background: #4866db;
 }
 
-/* Toggle menu button */
 .btn-menu {
     background: none;
     border: none;
@@ -178,30 +171,6 @@ body {
     font-size: 20px;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.active {
-        transform: translateX(0);
-    }
-
-    .main-content {
-        margin-left: 0;
-    }
-
-    .container {
-        padding: 10px;
-    }
-
-    .btn-menu {
-        display: block;
-    }
-}
-
-/* Styles pour les messages Flash */
 .flash-messages {
     margin-bottom: 1.5rem;
 }

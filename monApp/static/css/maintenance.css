@@ -1,243 +1,211 @@
-/* Filter Card */
-.filter-card {
-    margin-bottom: 20px;
-    background: #ffffff;
-    padding: 20px;
-    border: 1px solid #ddd;
+/* ===================================
+   Main Layout & Typography
+====================================== */
+
+:root {
+    --primary-color: #3498db;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --light-grey-color: #f8f9fa;
+    --medium-grey-color: #e9ecef;
+    --dark-grey-color: #6c757d;
+    --text-color: #343a40;
+    --card-bg: #ffffff;
+    --card-border-color: #dee2e6;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Filter Form */
-.filter-form {
-    display: flex;
-    gap: 20px;
-    align-items: flex-end;
-    flex-wrap: wrap;
+.page-title {
+    margin-bottom: 2rem;
 }
 
-.filter-group {
-    flex: 1;
-    min-width: 200px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+.page-title h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
 }
 
-.filter-group label {
-    color: #555;
-    font-size: 14px;
-    font-weight: 500;
+.page-title p {
+    font-size: 1rem;
+    color: var(--dark-grey-color);
 }
 
-.filter-group input,
-.filter-group select {
-    padding: 10px 12px;
-    background: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    color: #333;
-    font-size: 14px;
-    transition: border 0.2s;
-}
 
-.filter-group input:focus,
-.filter-group select:focus {
-    outline: none;
-    border-color: #5677ff;
-}
+/* ===================================
+   Card Styling
+====================================== */
 
-.filter-group input::placeholder {
-    color: #888;
-}
-
-.filter-group select {
-    cursor: pointer;
-}
-
-/* Card */
 .card {
-    background: #ffffff;
-    border-radius: 6px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    overflow: hidden; /* Ensures child elements respect border-radius */
 }
 
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--light-grey-color);
+    border-bottom: 1px solid var(--card-border-color);
 }
 
 .card-title {
-    font-size: 18px;
+    font-size: 1.25rem;
     font-weight: 600;
+    margin: 0;
+    color: var(--text-color);
 }
 
-/* Table */
-.table-container {
+
+/* ===================================
+   Table Styling
+====================================== */
+
+.table-responsive {
+    width: 100%;
     overflow-x: auto;
 }
 
-table {
+.table {
     width: 100%;
     border-collapse: collapse;
+    color: var(--text-color);
 }
 
-thead {
-    background: #f2f2f2;
+.table thead {
+    background-color: var(--light-grey-color);
 }
 
-th {
-    padding: 12px;
+.table th,
+.table td {
+    padding: 1rem 1.5rem;
     text-align: left;
+    vertical-align: middle;
+    border-top: 1px solid var(--card-border-color);
+}
+
+.table th {
     font-weight: 600;
-    font-size: 13px;
+    font-size: 0.875rem;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    color: #555;
+    letter-spacing: 0.5px;
+    color: var(--dark-grey-color);
 }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #e6e6e6;
+.table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
 }
 
-tbody tr:hover {
-    background: #f8f8f8;
+.table tbody tr:first-child td {
+    border-top: none;
 }
 
-/* Badges */
+.text-center {
+    text-align: center;
+    color: var(--dark-grey-color);
+    padding: 2rem;
+}
+
+
+/* ===================================
+   Badge Styling (for status)
+====================================== */
+
 .badge {
     display: inline-block;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 13px;
+    padding: 0.4em 0.7em;
+    font-size: 0.8rem;
     font-weight: 600;
-}
-
-.badge-success {
-    background: #e6f7ef;
-    color: #2e9d63;
-}
-
-.badge-warning {
-    background: #fff3cd;
-    color: #af8600;
-}
-
-.badge-danger {
-    background: #fde2e2;
-    color: #d9534f;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 12px;
+    color: #fff;
 }
 
 .badge-primary {
-    background: #e8ecff;
-    color: #5677ff;
+    background-color: var(--primary-color);
 }
 
-/* Action Buttons */
-.btn-action {
+.badge-success {
+    background-color: var(--success-color);
+}
+
+.badge-danger {
+    background-color: var(--danger-color);
+}
+
+
+/* ===================================
+   Button Styling
+====================================== */
+/* Assuming base .btn styles might be in base.css, but defining here to be sure */
+.btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 6px;
-    margin-right: 6px;
-    text-decoration: none;
-    transition: 0.2s;
-    font-size: 14px;
-}
-
-/* Edit */
-.btn-edit {
-    background: rgba(86, 119, 255, 0.1);
-    color: #5677ff;
-}
-
-.btn-edit:hover {
-    background: #5677ff;
-    color: white;
-}
-
-/* Delete */
-.btn-delete {
-    background: rgba(217, 83, 79, 0.1);
-    color: #d9534f;
-}
-
-.btn-delete:hover {
-    background: #d9534f;
-    color: white;
-}
-
-/* Form Card */
-.form-card {
-    background: #ffffff;
-    border: 1px solid #ddd;
-}
-
-/* Form Layout */
-.personnel-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    align-items: end;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.form-group label {
-    color: #555;
-    font-size: 14px;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
     font-weight: 500;
-}
-
-.form-group input, .form-group select {
-    padding: 10px 12px;
-    background: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    color: #333;
-    font-size: 14px;
-    transition: border 0.2s;
-}
-
-.form-group input:focus, .form-group select:focus {
-    outline: none;
-    border-color: #5677ff;
-}
-
-.form-group input::placeholder {
-    color: #888;
-}
-
-/* Submit Button */
-.btn-success {
-    background: #2e9d63;
-    color: white;
-    padding: 10px 22px;
+    text-align: center;
+    text-decoration: none;
     border: none;
     border-radius: 6px;
-    font-weight: 600;
     cursor: pointer;
-    transition: 0.2s;
-    display: inline-flex;
-    gap: 6px;
-    justify-self: start;
-    align-self: end;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9; /* Darker blue */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: #fff;
 }
 
 .btn-success:hover {
-    background: #268455;
+    background-color: #27ae60; /* Darker green */
+}
+
+.btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+}
+
+td.actions {
+    text-align: right;
+}
+
+td.actions .btn {
+    margin-left: 0.5rem;
+}
+
+/* ===================================
+   Responsive adjustments
+====================================== */
+
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.75rem;
+    }
 }

@@ -3,7 +3,7 @@ import yaml
 from .app import app, db
 from hashlib import sha256
 from datetime import datetime
-from .models import User, Plateforme, Personnel, Budget, Habilitation, Campagne, Echantillon, Maintenance, UserRole
+from .models import User, Plateforme, Personnel, Budget, Habilitation, Campagne, Echantillon, Maintenance, UserRole, MaintenanceStatus
 import os
 from sqlalchemy import text
 
@@ -15,30 +15,6 @@ def loaddb(filename):
     db.drop_all()
     db.create_all()
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    sql_path = os.path.join(current_dir, 'data', 'trigger.sql')
-    
-    with open(sql_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    with db.engine.connect() as connection:
-        commands = content.split('|')
-
-        for command in commands:
-            cmd = command.strip()
-
-            if cmd and "CREATE" in cmd.upper():
-                
-                cmd = cmd.replace("DELIMITER", "").strip()
-                
-                print(f"Exécution d'un trigger...")
-                try:
-                    connection.execute(text(cmd))
-                except Exception as e:
-                    print(f"Erreur sur ce trigger : {e}")
-
-        connection.commit()
-
     with open(filename, 'r', encoding='utf-8') as f:
         data = yaml.safe_load(f)
 
@@ -47,7 +23,7 @@ def loaddb(filename):
         if not User.query.filter_by(username=u['username']).first():
             m = sha256()
             m.update(u['password'].encode())
-            user_role = UserRole(u.get('role', 'chercheur')) # Par défaut 'chercheur' si non spécifié
+            user_role = UserRole(u.get('role', 'chercheur'))
             user = User( 
                 username=u['username'],
                 password=m.hexdigest(),
@@ -158,10 +134,13 @@ def loaddb(filename):
 
     # MAINTENANCES
     for m in data.get('maintenances', []):
+        statut = MaintenanceStatus[m.get('statut', 'PREVUE').upper()]
+
         maint = Maintenance(
             date_maintenance=datetime.strptime(m['date_maintenance'], '%Y-%m-%d').date(),
             duree=m['duree'],
-            type_operation=m['type_operation']
+            type_operation=m['type_operation'],
+            statut=statut
         )
 
         if m['id_plateforme'] in dict_pl:

@@ -9,6 +9,10 @@ class UserRole(enum.Enum):
     TECHNIQUE = 'technique'
     CHERCHEUR = 'chercheur'
 
+class MaintenanceStatus(enum.Enum):
+    PREVUE = 'Prévue'
+    TERMINEE = 'Terminée'
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -169,8 +173,16 @@ class Maintenance(db.Model):
     date_maintenance = db.Column(db.Date)
     duree = db.Column(db.Integer)
     type_operation = db.Column(db.String(100))
+    statut = db.Column(db.Enum(MaintenanceStatus), nullable=False, default=MaintenanceStatus.PREVUE)
 
     idPl = db.Column(db.Integer, db.ForeignKey('PLATEFORME.idPl'))
 
     def __repr__(self):
         return f'<Maintenance {self.type_operation} sur {self.idPl}>'
+
+    @property
+    def statut_class(self):
+        if self.statut == MaintenanceStatus.PREVUE:
+            return "primary"
+        elif self.statut == MaintenanceStatus.TERMINEE:
+            return "success"

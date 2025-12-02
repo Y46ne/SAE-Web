@@ -1,4 +1,3 @@
-/* Filter Card */
 .filter-card {
     margin-bottom: 20px;
     background: #ffffff;
@@ -6,7 +5,6 @@
     border: 1px solid #ddd;
 }
 
-/* Filter Form */
 .filter-form {
     display: flex;
     gap: 20px;
@@ -53,7 +51,7 @@
     cursor: pointer;
 }
 
-/* Card */
+
 .card {
     background: #ffffff;
     border-radius: 6px;
@@ -74,7 +72,7 @@
     font-weight: 600;
 }
 
-/* Table */
+
 .table-container {
     overflow-x: auto;
 }
@@ -107,7 +105,7 @@ tbody tr:hover {
     background: #f8f8f8;
 }
 
-/* Badges */
+
 .badge {
     display: inline-block;
     padding: 6px 12px;
@@ -136,7 +134,7 @@ tbody tr:hover {
     color: #5677ff;
 }
 
-/* Action Buttons */
+
 .btn-action {
     display: inline-flex;
     align-items: center;
@@ -150,7 +148,7 @@ tbody tr:hover {
     font-size: 14px;
 }
 
-/* Edit */
+
 .btn-edit {
     background: rgba(86, 119, 255, 0.1);
     color: #5677ff;
@@ -161,7 +159,7 @@ tbody tr:hover {
     color: white;
 }
 
-/* Delete */
+
 .btn-delete {
     background: rgba(217, 83, 79, 0.1);
     color: #d9534f;
@@ -172,13 +170,13 @@ tbody tr:hover {
     color: white;
 }
 
-/* Form Card */
+
 .form-card {
     background: #ffffff;
     border: 1px solid #ddd;
 }
 
-/* Form Layout */
+
 .personnel-form {
     display: flex;
     flex-direction: column;
@@ -222,7 +220,7 @@ tbody tr:hover {
     color: #888;
 }
 
-/* Submit Button */
+
 .btn-success {
     background: #2e9d63;
     color: white;

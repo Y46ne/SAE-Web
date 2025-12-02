@@ -18,6 +18,10 @@ class RegisterForm(FlaskForm):
         'Confirmer le mot de passe', 
         validators=[DataRequired(), EqualTo('password')]
     )
+    role = SelectField(
+        'Rôle',
+        validators=[DataRequired()]
+    )
     submit = SubmitField('Créer le compte')
 
     def validate_username(self, username):
