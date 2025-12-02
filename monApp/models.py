@@ -3,54 +3,90 @@ from .app import db
 from datetime import date, timedelta
 import enum
 
+
 class UserRole(enum.Enum):
     ADMIN = 'admin'
     DIRECTION = 'direction'
     TECHNIQUE = 'technique'
     CHERCHEUR = 'chercheur'
 
+
 class MaintenanceStatus(enum.Enum):
     PREVUE = 'Prévue'
     TERMINEE = 'Terminée'
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
-    role = db.Column(db.Enum(UserRole), nullable=False, default=UserRole.CHERCHEUR)
+    role = db.Column(db.Enum(UserRole),
+                     nullable=False,
+                     default=UserRole.CHERCHEUR)
 
     def __repr__(self):
         return f'<User {self.username}>'
 
 
-implique = db.Table('IMPLIQUE',
-    db.Column('idCamp', db.Integer, db.ForeignKey('CAMPAGNE.idCamp'), primary_key=True),
-    db.Column('idPers', db.Integer, db.ForeignKey('PERSONNEL.idPers'), primary_key=True)
-)
+implique = db.Table(
+    'IMPLIQUE',
+    db.Column('idCamp',
+              db.Integer,
+              db.ForeignKey('CAMPAGNE.idCamp'),
+              primary_key=True),
+    db.Column('idPers',
+              db.Integer,
+              db.ForeignKey('PERSONNEL.idPers'),
+              primary_key=True))
 
-participe = db.Table('PARTICIPE',
-    db.Column('idEch', db.Integer, db.ForeignKey('ECHANTILLON.idEch'), primary_key=True),
-    db.Column('idPers', db.Integer, db.ForeignKey('PERSONNEL.idPers'), primary_key=True)
-)
+participe = db.Table(
+    'PARTICIPE',
+    db.Column('idEch',
+              db.Integer,
+              db.ForeignKey('ECHANTILLON.idEch'),
+              primary_key=True),
+    db.Column('idPers',
+              db.Integer,
+              db.ForeignKey('PERSONNEL.idPers'),
+              primary_key=True))
 
-valide = db.Table('VALIDE',
-    db.Column('idBudg', db.Integer, db.ForeignKey('BUDGET.idBudg'), primary_key=True),
-    db.Column('idCamp', db.Integer, db.ForeignKey('CAMPAGNE.idCamp'), primary_key=True)
-)
+valide = db.Table(
+    'VALIDE',
+    db.Column('idBudg',
+              db.Integer,
+              db.ForeignKey('BUDGET.idBudg'),
+              primary_key=True),
+    db.Column('idCamp',
+              db.Integer,
+              db.ForeignKey('CAMPAGNE.idCamp'),
+              primary_key=True))
 
-possede = db.Table('POSSEDE',
-    db.Column('idPers', db.Integer, db.ForeignKey('PERSONNEL.idPers'), primary_key=True),
-    db.Column('idHab', db.Integer, db.ForeignKey('HABILITATION.idHab'), primary_key=True)
-)
+possede = db.Table(
+    'POSSEDE',
+    db.Column('idPers',
+              db.Integer,
+              db.ForeignKey('PERSONNEL.idPers'),
+              primary_key=True),
+    db.Column('idHab',
+              db.Integer,
+              db.ForeignKey('HABILITATION.idHab'),
+              primary_key=True))
 
-requiert = db.Table('REQUIERT',
-    db.Column('idPl', db.Integer, db.ForeignKey('PLATEFORME.idPl'), primary_key=True),
-    db.Column('idHab', db.Integer, db.ForeignKey('HABILITATION.idHab'), primary_key=True)
-)
+requiert = db.Table(
+    'REQUIERT',
+    db.Column('idPl',
+              db.Integer,
+              db.ForeignKey('PLATEFORME.idPl'),
+              primary_key=True),
+    db.Column('idHab',
+              db.Integer,
+              db.ForeignKey('HABILITATION.idHab'),
+              primary_key=True))
+
 
 class Plateforme(db.Model):
     __tablename__ = 'PLATEFORME'
-    
+
     idPl = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
     nb_personnes_necessaires = db.Column(db.Integer)
@@ -58,10 +94,15 @@ class Plateforme(db.Model):
     intervalle_maintenance = db.Column(db.Integer)
 
     campagnes = db.relationship('Campagne', backref='plateforme', lazy=True)
-    maintenances = db.relationship('Maintenance', backref='plateforme', lazy=True)
-    
-    habilitations_requises = db.relationship('Habilitation', secondary=requiert, 
-                                             backref=db.backref('plateformes_requerantes', lazy=True))
+    maintenances = db.relationship('Maintenance',
+                                   backref='plateforme',
+                                   lazy=True)
+
+    habilitations_requises = db.relationship('Habilitation',
+                                             secondary=requiert,
+                                             backref=db.backref(
+                                                 'plateformes_requerantes',
+                                                 lazy=True))
 
     def __repr__(self):
         return f'<Plateforme {self.nom}>'
@@ -73,14 +114,19 @@ class Personnel(db.Model):
     idPers = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
 
-    habilitations = db.relationship('Habilitation', secondary=possede, 
+    habilitations = db.relationship('Habilitation',
+                                    secondary=possede,
                                     backref=db.backref('personnel', lazy=True))
-    
-    campagnes = db.relationship('Campagne', secondary=implique, 
-                                backref=db.backref('personnel_implique', lazy=True))
-    
-    echantillons = db.relationship('Echantillon', secondary=participe, 
-                                   backref=db.backref('personnel_participant', lazy=True))
+
+    campagnes = db.relationship('Campagne',
+                                secondary=implique,
+                                backref=db.backref('personnel_implique',
+                                                   lazy=True))
+
+    echantillons = db.relationship('Echantillon',
+                                   secondary=participe,
+                                   backref=db.backref('personnel_participant',
+                                                      lazy=True))
 
     def __repr__(self):
         return f'<Personnel {self.nom}>'
@@ -93,8 +139,10 @@ class Budget(db.Model):
     mois = db.Column(db.Date)
     montant = db.Column(db.Numeric(12, 2))
 
-    campagnes_validees = db.relationship('Campagne', secondary=valide, 
-                                         backref=db.backref('budgets_validants', lazy=True))
+    campagnes_validees = db.relationship('Campagne',
+                                         secondary=valide,
+                                         backref=db.backref(
+                                             'budgets_validants', lazy=True))
 
     def __repr__(self):
         return f'<Budget {self.idBudg} - {self.mois}>'
@@ -117,6 +165,7 @@ class Habilitation(db.Model):
     def __repr__(self):
         return f'<Habilitation {self.nomHab}>'
 
+
 class Campagne(db.Model):
     __tablename__ = 'CAMPAGNE'
 
@@ -125,10 +174,12 @@ class Campagne(db.Model):
     date_debut = db.Column(db.Date)
     duree = db.Column(db.Integer)
     lieu = db.Column(db.String(100))
-    
+
     idPl = db.Column(db.Integer, db.ForeignKey('PLATEFORME.idPl'))
 
-    echantillons = db.relationship('Echantillon', backref='campagne', lazy=True)
+    echantillons = db.relationship('Echantillon',
+                                   backref='campagne',
+                                   lazy=True)
 
     def __repr__(self):
         return f'<Campagne {self.idCamp} - {self.lieu}>'
@@ -138,7 +189,8 @@ class Campagne(db.Model):
         today = date.today()
         if self.date_debut > today:
             return "Prévue"
-        elif self.date_debut <= today <= self.date_debut + timedelta(days=self.duree):
+        elif self.date_debut <= today <= self.date_debut + timedelta(
+                days=self.duree):
             return "En cours"
         else:
             return "Terminée"
@@ -159,7 +211,7 @@ class Echantillon(db.Model):
     idEch = db.Column(db.Integer, primary_key=True)
     fichier_sequence = db.Column(db.String(255))
     commentaire = db.Column(db.Text)
-    
+
     idCamp = db.Column(db.Integer, db.ForeignKey('CAMPAGNE.idCamp'))
 
     def __repr__(self):
@@ -173,7 +225,9 @@ class Maintenance(db.Model):
     date_maintenance = db.Column(db.Date)
     duree = db.Column(db.Integer)
     type_operation = db.Column(db.String(100))
-    statut = db.Column(db.Enum(MaintenanceStatus), nullable=False, default=MaintenanceStatus.PREVUE)
+    statut = db.Column(db.Enum(MaintenanceStatus),
+                       nullable=False,
+                       default=MaintenanceStatus.PREVUE)
 
     idPl = db.Column(db.Integer, db.ForeignKey('PLATEFORME.idPl'))
 

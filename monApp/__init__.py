@@ -1,2 +1,2 @@
-from .app import app, db 
+from .app import app, db
 import monApp.commands

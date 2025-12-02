@@ -7,6 +7,7 @@ from .models import User, Plateforme, Personnel, Budget, Habilitation, Campagne,
 import os
 from sqlalchemy import text
 
+
 @app.cli.command()
 @click.argument('filename')
 def loaddb(filename):
@@ -24,11 +25,9 @@ def loaddb(filename):
             m = sha256()
             m.update(u['password'].encode())
             user_role = UserRole(u.get('role', 'chercheur'))
-            user = User( 
-                username=u['username'],
-                password=m.hexdigest(),
-                role=user_role
-            )
+            user = User(username=u['username'],
+                        password=m.hexdigest(),
+                        role=user_role)
             db.session.add(user)
     db.session.commit()
     print("Utilisateurs chargés.")
@@ -44,7 +43,7 @@ def loaddb(filename):
         hab = Habilitation(nomHab=h['nom'])
         db.session.add(hab)
         dict_hab[h['id']] = hab
-    
+
     db.session.commit()
 
     # PLATEFORMES
@@ -53,50 +52,46 @@ def loaddb(filename):
             nom=p['nom'],
             nb_personnes_necessaires=p['nb_personnes_necessaires'],
             cout_journalier=p['cout_journalier'],
-            intervalle_maintenance=p['intervalle_maintenance']
-        )
-        
+            intervalle_maintenance=p['intervalle_maintenance'])
+
         for id_hab in p.get('habilitations_requises', []):
             if id_hab in dict_hab:
                 plat.habilitations_requises.append(dict_hab[id_hab])
-        
+
         db.session.add(plat)
         dict_pl[p['id']] = plat
-    
+
     db.session.commit()
 
     # PERSONNEL
     for pers in data.get('personnel', []):
         personnel = Personnel(nom=pers['nom'])
-        
+
         for id_hab in pers.get('habilitations', []):
             if id_hab in dict_hab:
                 personnel.habilitations.append(dict_hab[id_hab])
 
         db.session.add(personnel)
         dict_pers[pers['id']] = personnel
-    
+
     db.session.commit()
 
     # BUDGETS
     for b in data.get('budgets', []):
-        budget = Budget(
-            mois=datetime.strptime(b['mois'], '%Y-%m-%d').date(),
-            montant=b['montant']
-        )
+        budget = Budget(mois=datetime.strptime(b['mois'], '%Y-%m-%d').date(),
+                        montant=b['montant'])
         db.session.add(budget)
         dict_budg[b['id']] = budget
-    
+
     db.session.commit()
 
     # CAMPAGNES
     for c in data.get('campagnes', []):
-        camp = Campagne(
-            nom=c['nom'],
-            date_debut=datetime.strptime(c['date_debut'], '%Y-%m-%d').date(),
-            duree=c['duree'],
-            lieu=c['lieu']
-        )
+        camp = Campagne(nom=c['nom'],
+                        date_debut=datetime.strptime(c['date_debut'],
+                                                     '%Y-%m-%d').date(),
+                        duree=c['duree'],
+                        lieu=c['lieu'])
 
         if c['id_plateforme'] in dict_pl:
             camp.plateforme = dict_pl[c['id_plateforme']]
@@ -104,10 +99,10 @@ def loaddb(filename):
         for id_pers in c.get('personnel_implique', []):
             if id_pers in dict_pers:
                 camp.personnel_implique.append(dict_pers[id_pers])
-        
+
         if 'id_budget' in c and c['id_budget'] in dict_budg:
-             budget_associe = dict_budg[c['id_budget']]
-             budget_associe.campagnes_validees.append(camp)
+            budget_associe = dict_budg[c['id_budget']]
+            budget_associe.campagnes_validees.append(camp)
 
         db.session.add(camp)
         dict_camp[c['id']] = camp
@@ -116,32 +111,29 @@ def loaddb(filename):
 
     # ECHANTILLONS
     for e in data.get('echantillons', []):
-        ech = Echantillon(
-            fichier_sequence=e['fichier_sequence'],
-            commentaire=e.get('commentaire')
-        )
+        ech = Echantillon(fichier_sequence=e['fichier_sequence'],
+                          commentaire=e.get('commentaire'))
 
         if e['id_campagne'] in dict_camp:
             ech.campagne = dict_camp[e['id_campagne']]
-        
+
         for id_pers in e.get('personnel_participant', []):
             if id_pers in dict_pers:
                 ech.personnel_participant.append(dict_pers[id_pers])
 
         db.session.add(ech)
-    
+
     db.session.commit()
 
     # MAINTENANCES
     for m in data.get('maintenances', []):
         statut = MaintenanceStatus[m.get('statut', 'PREVUE').upper()]
 
-        maint = Maintenance(
-            date_maintenance=datetime.strptime(m['date_maintenance'], '%Y-%m-%d').date(),
-            duree=m['duree'],
-            type_operation=m['type_operation'],
-            statut=statut
-        )
+        maint = Maintenance(date_maintenance=datetime.strptime(
+            m['date_maintenance'], '%Y-%m-%d').date(),
+                            duree=m['duree'],
+                            type_operation=m['type_operation'],
+                            statut=statut)
 
         if m['id_plateforme'] in dict_pl:
             maint.plateforme = dict_pl[m['id_plateforme']]
@@ -158,6 +150,7 @@ def syncdb():
     db.create_all()
     print("Tables synchronisées.")
 
+
 @app.cli.command()
 @click.argument('username')
 @click.argument('password')
@@ -167,13 +160,13 @@ def newuser(username, password):
     m = sha256()
     m.update(password.encode())
     # On assigne le rôle 'chercheur' par défaut, comme dans le modèle
-    user = User(
-        username=username, 
-        password=m.hexdigest(),
-        role=UserRole.CHERCHEUR)
+    user = User(username=username,
+                password=m.hexdigest(),
+                role=UserRole.CHERCHEUR)
     db.session.add(user)
     db.session.commit()
     print(f"Utilisateur {username} créé avec succès.")
+
 
 @app.cli.command()
 @click.argument('username')
