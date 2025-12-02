@@ -1,119 +1,80 @@
 {% extends "base.html" %}
 
-{% block title %}Gestion du budget{% endblock %}
+{% block title %}Gestion du Budget{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/budget.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/budget.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="page-title">
-    <h1>Gestion du budget</h1>
-    <p>Bienvenue, userName - userRole</p>
+    <h1>Gestion du Budget</h1>
+    <p>Consultez et ajoutez des allocations budgétaires mensuelles.</p>
 </div>
 
-<div class="card filter-card">
-    <form method="GET" action="/budget" class="filter-form">
-        <div class="filter-group">
-            <label for="search">Recherche par nom :</label>
-            <input type="text" id="search" name="search" placeholder="Entrez un nom de campagne...">
-        </div>
-        
-        <div class="filter-group">
-            <label for="status">Filtrer par statut :</label>
-            <select id="status" name="status">
-                <option value="">Tous les statuts</option>
-                <option value="active">Actif</option>
-                <option value="completed">Terminé</option>
-                <option value="pending">En attente</option>
-            </select>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-filter"></i> Filtrer
-        </button>
-    </form>
-</div>
+<div class="content-grid" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
 
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title">Détails du budget par campagne</h2>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Historique des Budgets</h2>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mois</th>
+                        <th>Montant Alloué</th>
+                        <th>Dépenses</th>
+                        <th>Solde</th>
+                        <th style="width: 15%;">Utilisation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for budget in budgets %}
+                    {% set percentage = (budget.cout_total_campagnes / budget.montant * 100) if budget.montant > 0 else 0 %}
+                    {% set bar_class = 'bg-success' %}
+                    {% if percentage > 80 %}{% set bar_class = 'bg-warning' %}{% endif %}
+                    {% if percentage > 100 %}{% set bar_class = 'bg-danger' %}{% endif %}
+                    <tr>
+                        <td>{{ budget.mois.strftime('%B %Y') }}</td>
+                        <td>{{ "%.2f"|format(budget.montant) }} €</td>
+                        <td>{{ "%.2f"|format(budget.cout_total_campagnes) }} €</td>
+                        <td>{{ "%.2f"|format(budget.montant - budget.cout_total_campagnes) }} €</td>
+                        <td>
+                            <div class="budget-item" style="padding: 0;">
+                                <div class="progress-bar-container" style="margin-bottom: 0.25rem;">
+                                    <div class="progress-bar {{ bar_class }}" style="width: {{ [percentage, 100]|min }}%;"></div>
+                                </div>
+                                <span style="font-size: 0.8rem; color: #666;">
+                                    {{ "%.1f"|format(percentage) }}%
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3">Aucun budget enregistré.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Campagne</th>
-                    <th>Budget Alloué</th>
-                    <th>Dépenses Actuelles</th>
-                    <th>Reste à Dépenser</th>
-                    <th>Statut</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Analyse ADN</td>
-                    <td>1 500€</td>
-                    <td>1 200€</td>
-                    <td>300€</td>
-                    <td><span class="badge badge-success">Actif</span></td>
-                    <td>
-                        <a href="/budget/edit/1" class="btn-action btn-edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="/budget/delete/1" class="btn-action btn-delete" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Recherche fossiles</td>
-                    <td>2 000€</td>
-                    <td>1 800€</td>
-                    <td>200€</td>
-                    <td><span class="badge badge-success">Actif</span></td>
-                    <td>
-                        <a href="/budget/edit/2" class="btn-action btn-edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="/budget/delete/2" class="btn-action btn-delete" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Datation Carbone</td>
-                    <td>1 000€</td>
-                    <td>500€</td>
-                    <td>500€</td>
-                    <td><span class="badge badge-warning">En attente</span></td>
-                    <td>
-                        <a href="/budget/edit/3" class="btn-action btn-edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="/budget/delete/3" class="btn-action btn-delete" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Étude environnementale</td>
-                    <td>700€</td>
-                    <td>650€</td>
-                    <td>50€</td>
-                    <td><span class="badge badge-success">Actif</span></td>
-                    <td>
-                        <a href="/budget/edit/4" class="btn-action btn-edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="/budget/delete/4" class="btn-action btn-delete" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+    <div class="card form-card">
+        <h2 class="card-title">Ajouter un Budget</h2>
+        <form method="POST" action="{{ url_for('budget') }}">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.mois.label }}
+                {{ form.mois(placeholder='AAAA-MM-JJ') }}
+            </div>
+            <div class="form-group">
+                {{ form.montant.label }}
+                {{ form.montant(placeholder='Ex: 50000') }}
+            </div>
+            {{ form.submit(class='btn btn-success', value='Ajouter le Budget') }}
+        </form>
     </div>
 </div>
 {% endblock %}

@@ -37,16 +37,12 @@
         <h2 class="card-title">Muter une Séquence</h2>
         <form method="POST" action="{{ url_for('analyse_mutate') }}">
             <div class="form-group">
-                <div>
-                    <label for="sequence_to_mutate">Séquence à muter</label>
-                    <textarea id="sequence_to_mutate" name="sequence_to_mutate" rows="3" placeholder="Entrez une séquence ADN..." required>{{ original_for_mutation or '' }}</textarea>
-                </div>
+                <label for="sequence_to_mutate">Séquence à muter</label>
+                <textarea id="sequence_to_mutate" name="sequence_to_mutate" rows="3" placeholder="Entrez une séquence ADN..." required>{{ original_for_mutation or '' }}</textarea>
             </div>
             <div class="form-group">
-                <div>
-                    <label for="mutation_rate">Taux de mutation</label>
-                    <input type="text" id="mutation_rate" name="mutation_rate" value="0.1" placeholder="Ex: 0.1" required>
-                </div>
+                <label for="mutation_rate">Taux de mutation</label>
+                <input type="text" id="mutation_rate" name="mutation_rate" value="0.1" placeholder="Ex: 0.1" required>
             </div>
             <button type="submit" class="btn btn-primary"><i class="fas fa-exchange-alt"></i> Muter</button>
         </form>
@@ -80,62 +76,35 @@
         {% endif %}
     </div>
 
-
     <!-- Arbre phylogénétique -->
     <div class="card">
         <h2 class="card-title">Construire un Arbre Phylogénétique</h2>
         <form method="POST" action="{{ url_for('analyse_tree') }}">
-            <div id="species-list">
-                <!-- Les champs pour les espèces seront ajoutés ici par JS -->
+            <div class="form-group">
+                <label for="sequences_tree">Séquences (une par ligne)</label>
+                <textarea id="sequences_tree" name="sequences_tree" rows="5" placeholder="Entrez au moins deux séquences..." required>{{ original_sequences_tree or '' }}</textarea>
             </div>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button type="button" id="add-species-btn" class="btn btn-secondary" style="background-color: #6c757d; color: white;"><i class="fas fa-plus"></i> Ajouter une espèce</button>
-                <button type="submit" class="btn btn-primary"><i class="fas fa-project-diagram"></i> Construire l'Arbre</button>
-            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-project-diagram"></i> Construire</button>
         </form>
         {% if newick_tree %}
         <div class="result">
-            <strong>Arbre Phylogénétique :</strong>
+            <strong>Arbre (format Newick) :</strong>
             <pre>{{ newick_tree }}</pre>
         </div>
         {% endif %}
     </div>
 
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const speciesList = document.getElementById('species-list');
-    const addSpeciesBtn = document.getElementById('add-species-btn');
-    let speciesCount = 0;
-
-    function addSpecies(name = '', sequence = '') {
-        speciesCount++;
-        const speciesDiv = document.createElement('div');
-        speciesDiv.className = 'form-group species-entry';
-        speciesDiv.style.display = 'flex';
-        speciesDiv.style.gap = '10px';
-        speciesDiv.innerHTML = `
-            <div style="flex: 1;">
-                <label for="species-name-${speciesCount}">Nom de l'espèce</label>
-                <input type="text" name="species-name" id="species-name-${speciesCount}" placeholder="Ex: Souris" value="${name}" required>
-            </div>
-            <div style="flex: 2;">
-                <label for="species-sequence-${speciesCount}">Séquence ADN</label>
-                <textarea name="species-sequence" id="species-sequence-${speciesCount}" rows="1" placeholder="ATCG..." required>${sequence}</textarea>
-            </div>
-            <button type="button" class="btn-remove" style="align-self: end; background: none; border: none; cursor: pointer; color: #dc3545; padding-bottom: 8px;" title="Supprimer">&times;</button>
-        `;
-        speciesList.appendChild(speciesDiv);
-
-        speciesDiv.querySelector('.btn-remove').addEventListener('click', function() {
-            speciesDiv.remove();
-        });
+    // Simple script to scroll to the result card if it exists
+    const result = document.querySelector('.result');
+    if (result) {
+        result.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-
-    addSpeciesBtn.addEventListener('click', () => addSpecies());
-    addSpecies('Souris', 'ATCGGGT'); // Ajoute une première espèce par défaut
-    addSpecies('Rat', 'ATCGAGT');   // Ajoute une deuxième espèce par défaut
 });
 </script>
 {% endblock %}

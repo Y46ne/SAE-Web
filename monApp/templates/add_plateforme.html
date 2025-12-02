@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Modifier l'équipement{% endblock %}
+{% block title %}Ajouter un équipement{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
@@ -8,15 +8,15 @@
 
 {% block content %}
 <div class="page-title">
-    <h1>Modifier l'équipement</h1>
-    <p>Mettre à jour les informations de l'équipement : {{ equipement.nom }}.</p>
+    <h1>Ajouter un équipement</h1>
+    <p>Enregistrer un nouvel équipement dans la plateforme technique.</p>
 </div>
 
 <div class="card form-card">
     <div class="card-header">
-        <h2 class="card-title">Édition</h2>
+        <h2 class="card-title">Nouvel équipement</h2>
     </div>
-    <form method="POST" action="{{ url_for('edit_plateforme', equipement_id=equipement.idPl) }}">
+    <form method="POST" action="{{ url_for('add_plateforme') }}">
         {{ form.hidden_tag() }}
         <div class="form-group">
             {{ form.nom.label(for="nom") }}
@@ -39,8 +39,8 @@
             <div class="checkbox-grid">
                 {% for subfield in form.habilitations_requises %}
                     <div class="checkbox-item">
-                        {{ subfield(id=subfield.id, checked=subfield.data in form.habilitations_requises.data) }}
-                        {{ subfield.label(for=subfield.id) }}
+                        <input type="checkbox" id="{{ subfield.id }}" name="{{ subfield.name }}" value="{{ subfield.data }}">
+                        <label for="{{ subfield.id }}">{{ subfield.label.text }}</label>
                     </div>
                 {% endfor %}
             </div>
@@ -48,7 +48,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-success">
-                <i class="fas fa-save"></i> Enregistrer les modifications
+                <i class="fas fa-plus"></i> Ajouter l'équipement
             </button>
             <a href="{{ url_for('plateforme') }}" class="btn btn-secondary">Annuler</a>
         </div>

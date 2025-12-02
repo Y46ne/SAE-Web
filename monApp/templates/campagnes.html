@@ -9,14 +9,14 @@
 {% block content %}
 <div class="page-title">
     <h1>Gestion des Campagnes de Fouilles</h1>
-    <p>Bienvenue, userName - userRole</p>
+    <p>Consultez, ajoutez, modifiez ou supprimez des campagnes.</p>
 </div>
 
 <div class="card filter-card">
-    <form method="GET" action="/campagnes" class="filter-form">
+    <form method="GET" action="{{ url_for('campagnes') }}" class="filter-form">
         <div class="filter-group">
             <label for="search">Recherche par nom :</label>
-            <input type="text" id="search" name="search" placeholder="Entrez un nom de campagne...">
+            <input type="text" id="search" name="search" placeholder="Entrez un nom de campagne..." value="{{ request.args.get('search', '') }}">
         </div>
         
         <div class="filter-group">
@@ -38,6 +38,9 @@
 <div class="card">
     <div class="card-header">
         <h2 class="card-title">Liste des Campagnes</h2>
+        <a href="{{ url_for('add_campagne') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nouvelle Campagne
+        </a>
     </div>
     <div class="table-container">
         <table>
@@ -59,11 +62,11 @@
                     <td>{{ campagne.duree }}</td>
                     <td>{{ campagne.lieu }}</td>
                     <td><span class="badge badge-{{ campagne.statut_class }}">{{ campagne.statut }}</span></td>
-                    <td>
-                        <a href="/campagnes/edit/{{ campagne.id }}" class="btn-action btn-edit" title="Modifier">
+                    <td class="actions">
+                        <a href="{{ url_for('edit_campagne', campagne_id=campagne.idCamp) }}" class="btn-action btn-edit" title="Modifier">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="/campagnes/delete/{{ campagne.id }}" class="btn-action btn-delete" title="Supprimer">
+                        <a href="{{ url_for('delete_campagne', campagne_id=campagne.idCamp) }}" class="btn-action btn-delete" title="Supprimer">
                             <i class="fas fa-trash"></i>
                         </a>
                     </td>
@@ -72,35 +75,5 @@
             </tbody>
         </table>
     </div>
-</div>
-
-<div class="card form-card">
-    <div class="card-header">
-        <h2 class="card-title">Planifier une Nouvelle Campagne</h2>
-    </div>
-    <form method="POST" action="/campagnes/add" class="personnel-form">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="nom">Nom de la Campagne</label>
-                <input type="text" id="nom" name="nom" required>
-            </div>
-            <div class="form-group">
-                <label for="date_debut">Date de Début</label>
-                <input type="date" id="date_debut" name="date_debut" required>
-            </div>
-            <div class="form-group">
-                <label for="duree">Durée (en jours)</label>
-                <input type="number" id="duree" name="duree" min="1" required>
-            </div>
-            <div class="form-group">
-                <label for="lieu">Lieu</label>
-                <input type="text" id="lieu" name="lieu" required>
-            </div>
-            
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-plus"></i> Ajouter
-            </button>
-        </div>
-    </form>
 </div>
 {% endblock %}

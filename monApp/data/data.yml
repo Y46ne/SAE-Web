@@ -1,7 +1,17 @@
-# Données des utilisateurs (Admin)
+# Données des utilisateurs
 users:
   - username: "admin"
-    password: "password123"
+    password: "password"
+    role: "admin"
+  - username: "direction"
+    password: "password"
+    role: "direction"
+  - username: "technique"
+    password: "password"
+    role: "technique"
+  - username: "chercheur"
+    password: "password"
+    role: "chercheur"
 
 # Données Habilitations
 habilitations:
@@ -86,21 +96,22 @@ budgets:
     mois: "2025-10-01"
     montant: 50000.00
   - id: 2
-    mois: "2025-10-01"
+    mois: "2025-09-01"
     montant: 45000.00
   - id: 3
-    mois: "2025-10-01"
+    mois: "2025-08-01"
     montant: 60000.00
   - id: 4
-    mois: "2025-10-01"
+    mois: "2025-07-01"
     montant: 55000.00
   - id: 5
-    mois: "2025-10-01"
+    mois: "2025-06-01"
     montant: 48000.00
 
 # Données Campagnes
 campagnes:
   - id: 1
+    nom: "Fouilles Brestoises"
     date_debut: "2025-10-01"
     duree: 15
     lieu: "Brest"
@@ -108,6 +119,7 @@ campagnes:
     id_budget: 1 
     personnel_implique: [1, 10]
   - id: 2
+    nom: "Exploration Nantaise"
     date_debut: "2025-10-05"
     duree: 10
     lieu: "Nantes"
@@ -115,6 +127,7 @@ campagnes:
     id_budget: 2
     personnel_implique: [2]
   - id: 3
+    nom: "Recherches Lyonnaises"
     date_debut: "2025-10-10"
     duree: 20
     lieu: "Lyon"
@@ -122,6 +135,7 @@ campagnes:
     id_budget: 3
     personnel_implique: [4, 10]
   - id: 4
+    nom: "Sondages Parisiens"
     date_debut: "2025-10-12"
     duree: 25
     lieu: "Paris"
@@ -129,6 +143,7 @@ campagnes:
     id_budget: 4
     personnel_implique: [3]
   - id: 5
+    nom: "Découvertes Marseillaises"
     date_debut: "2025-10-15"
     duree: 18
     lieu: "Marseille"
@@ -137,26 +152,31 @@ campagnes:
     personnel_implique: [5]
 
   - id: 6
+    nom: "Mission Toulouse"
     date_debut: "2025-10-18"
     duree: 12
     lieu: "Toulouse"
     id_plateforme: 2
   - id: 7
+    nom: "Projet Bordeaux"
     date_debut: "2025-10-20"
     duree: 30
     lieu: "Bordeaux"
     id_plateforme: 1
   - id: 8
+    nom: "Opération Nice"
     date_debut: "2025-10-22"
     duree: 10
     lieu: "Nice"
     id_plateforme: 3
   - id: 9
+    nom: "Investigations Rennes"
     date_debut: "2025-10-24"
     duree: 22
     lieu: "Rennes"
     id_plateforme: 4
   - id: 10
+    nom: "Campagne du Nord"
     date_debut: "2025-10-26"
     duree: 14
     lieu: "Lille"

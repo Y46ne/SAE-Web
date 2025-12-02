@@ -3,13 +3,13 @@
 {% block title %}Séquences ADN{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/personnel.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/personnel.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="page-title">
     <h1>Consultation des Séquences d'ADN</h1>
-    <p>Bienvenue, userName - userRole</p>
+    <p>Gérez les échantillons ADN collectés lors des campagnes.</p>
 </div>
 
 <div class="card filter-card">
@@ -22,10 +22,10 @@
         <div class="filter-group">
             <label for="campaign">Filtrer par campagne :</label>
             <select id="campaign" name="campaign">
-                <option value="">Toutes les campagnes</option>
-                <option value="campagne1">Campagne 1</option>
-                <option value="campagne2">Campagne 2</option>
-                <option value="campagne3">Campagne 3</option>
+                <option value="">Toutes</option>
+                {% for camp in all_campaigns %}
+                <option value="{{ camp.idCamp }}">{{ camp.nom }}</option>
+                {% endfor %}
             </select>
         </div>
         
@@ -43,25 +43,25 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID Séquence</th>
+                    <th>ID Échantillon</th>
                     <th>Campagne</th>
                     <th>Fichier</th>
                     <th>Commentaire</th>
-                    <th>Actions</th>
+                    <th style="width: 120px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for sequence in sequences %}
                 <tr>
-                    <td>{{ sequence.id }}</td>
-                    <td>{{ sequence.campagne }}</td>
-                    <td>{{ sequence.fichier }}</td>
+                    <td>#{{ sequence.idEch }}</td>
+                    <td>{{ sequence.campagne.nom if sequence.campagne else 'N/A' }}</td>
+                    <td><i class="fas fa-file-alt"></i> {{ sequence.fichier_sequence }}</td>
                     <td>{{ sequence.commentaire }}</td>
                     <td>
-                        <a href="/sequences_adn/view/{{ sequence.id }}" class="btn-action btn-edit" title="Visualiser">
+                        <a href="{{ url_for('view_echantillon', echantillon_id=sequence.idEch) }}" class="btn-action btn-edit" title="Consulter">
                             <i class="fas fa-eye"></i>
                         </a>
-                        <a href="/sequences_adn/delete/{{ sequence.id }}" class="btn-action btn-delete" title="Supprimer">
+                        <a href="{{ url_for('delete_echantillon', echantillon_id=sequence.idEch) }}" class="btn-action btn-delete" title="Supprimer">
                             <i class="fas fa-trash"></i>
                         </a>
                     </td>
@@ -76,22 +76,20 @@
     <div class="card-header">
         <h2 class="card-title">Ajouter une séquence</h2>
     </div>
-    <form method="POST" action="/sequences_adn/add" class="personnel-form" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('sequences_adn') }}" class="personnel-form" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
         <div class="form-row">
             <div class="form-group">
-                <label for="campaign_select">Campagne</label>
-                <select id="campaign_select" name="campaign" required>
-                    <option value="campagne1">Campagne 1</option>
-                    <option value="campagne2">Campagne 2</option>
-                </select>
+                {{ form.campagne.label(for="campaign_select") }}
+                {{ form.campagne(id="campaign_select", required=True) }}
             </div>
             <div class="form-group">
-                <label for="commentaire">Commentaire</label>
-                <input type="text" id="commentaire" name="commentaire" placeholder="Commentaire">
+                {{ form.commentaire.label(for="commentaire") }}
+                {{ form.commentaire(id="commentaire", placeholder="Ajoutez une description...") }}
             </div>
             <div class="form-group">
-                <label for="sequence_file">Fichier Séquence</label>
-                <input type="file" id="sequence_file" name="sequence_file" required>
+                {{ form.fichier_sequence.label(for="sequence_file") }}
+                {{ form.fichier_sequence(id="sequence_file", required=True) }}
             </div>
             
             <button type="submit" class="btn btn-success">

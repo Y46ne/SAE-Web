@@ -3,37 +3,36 @@
 {% block title %}Tableau de bord - Dashboard{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/tableau_de_bord.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tableau_de_bord.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="page-title">
     <h1>Tableau de bord</h1>
-    <p>Bienvenue, userName - userRole</p>
 </div>
 
 <div class="stats-grid">
     <div class="stat-card">
         <i class="fas fa-bullhorn stat-icon"></i>
-        <div class="stat-value">8</div>
+        <div class="stat-value">{{ stats.active_campaigns }}</div>
         <div class="stat-label">Campagnes Actives</div>
     </div>
     
     <div class="stat-card">
         <i class="fas fa-euro-sign stat-icon"></i>
-        <div class="stat-value">5 200€</div>
+        <div class="stat-value">{{ stats.total_budget }}€</div>
         <div class="stat-label">Budget Total</div>
     </div>
     
     <div class="stat-card">
-        <i class="fas fa-bell stat-icon"></i>
-        <div class="stat-value">3</div>
-        <div class="stat-label">Alertes</div>
+        <i class="fas fa-users stat-icon"></i>
+        <div class="stat-value">{{ stats.total_personnel }}</div>
+        <div class="stat-label">Membres du personnel</div>
     </div>
     
     <div class="stat-card">
         <i class="fas fa-vial stat-icon"></i>
-        <div class="stat-value">24</div>
+        <div class="stat-value">{{ stats.total_samples }}</div>
         <div class="stat-label">Échantillons</div>
     </div>
 </div>
@@ -42,7 +41,7 @@
     <div class="card">
         <div class="card-header">
             <h2 class="card-title">Campagnes en cours</h2>
-            <a href="/campaigns" class="btn btn-primary">
+            <a href="{{ url_for('add_campagne') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Nouvelle
             </a>
         </div>
@@ -58,34 +57,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Analyse ADN</td>
-                        <td>15 Nov 2025</td>
-                        <td>30 jours</td>
-                        <td>Oxford</td>
-                        <td><span class="badge badge-success">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td>Recherche fossiles</td>
-                        <td>10 Nov 2025</td>
-                        <td>45 jours</td>
-                        <td>Beta</td>
-                        <td><span class="badge badge-success">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td>Datation Carbone</td>
-                        <td>01 Nov 2025</td>
-                        <td>15 jours</td>
-                        <td>Alpha</td>
-                        <td><span class="badge badge-warning">En attente</span></td>
-                    </tr>
-                    <tr>
-                        <td>Étude environnementale</td>
-                        <td>05 Nov 2025</td>
-                        <td>7 jours</td>
-                        <td>Oxford</td>
-                        <td><span class="badge badge-success">Active</span></td>
-                    </tr>
+                    {% for campagne in active_campaigns %}
+                        <tr>
+                            <td>{{ campagne.nom }}</td>
+                            <td>{{ campagne.date_debut.strftime('%d %b %Y') }}</td>
+                            <td>{{ campagne.duree }} jours</td>
+                            <td>{{ campagne.plateforme.nom if campagne.plateforme else 'N/A' }}</td>
+                            <td><span class="badge badge-{{ campagne.statut_class }}">{{ campagne.statut }}</span></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5">Aucune campagne en cours.</td></tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -94,67 +76,30 @@
     <div class="card">
         <div class="card-header">
             <h2 class="card-title">Utilisation Budget</h2>
-            <select class="btn btn-primary" style="padding: 0.5rem 1rem;">
-                <option>Ce mois</option>
-                <option>Ce trimestre</option>
-                <option>Cette année</option>
-            </select>
         </div>
-        <div class="chart-container">
-            <canvas id="budgetChart"></canvas>
-        </div>
-    </div>
-</div>
+        <ul class="budget-summary-list">
+            {% for i in range(budget_chart_data.labels|length) %}
+            <li>
+                {% set allocated = budget_chart_data.allocated[i] %}
+                {% set spent = budget_chart_data.spent[i] %}
+                {% set percentage = (spent / allocated * 100) if allocated > 0 else 0 %}
+                {% set bar_class = 'bg-success' %}
+                {% if percentage > 80 %}{% set bar_class = 'bg-warning' %}{% endif %}
+                {% if percentage > 100 %}{% set bar_class = 'bg-danger' %}{% endif %}
 
-<div class="content-grid">
-    <div class="card activity-section">
-        <div class="card-header">
-            <h2 class="card-title">Activité Récente</h2>
-            <a href="/activity" style="color: var(--primary); text-decoration: none; font-weight: 600;">
-                Voir tout <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        <ul class="activity-list">
-            <li class="activity-item">
-                <div class="activity-icon blue">
-                    <i class="fas fa-bullhorn"></i>
+                <div class="budget-item">
+                    <div class="budget-info">
+                        <span class="budget-month">{{ budget_chart_data.labels[i] }}</span>
+                        <span class="budget-values">{{ "%.0f"|format(spent) }}€ / {{ "%.0f"|format(allocated) }}€</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar {{ bar_class }}" style="width: {{ [percentage, 100]|min }}%;"></div>
+                    </div>
                 </div>
-                <div class="activity-content">
-                    <h4>Nouvelle campagne créée</h4>
-                    <p>La campagne "Promotion Black Friday" a été créée avec succès</p>
-                </div>
-                <span class="activity-time">Il y a 2 heures</span>
             </li>
-            <li class="activity-item">
-                <div class="activity-icon green">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Campagne terminée</h4>
-                    <p>"Campagne Été 2024" s'est terminée avec 12 500 impressions</p>
-                </div>
-                <span class="activity-time">Il y a 5 heures</span>
-            </li>
-            <li class="activity-item">
-                <div class="activity-icon pink">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Alerte budget</h4>
-                    <p>Le budget de "Lancement Produit X" a atteint 80%</p>
-                </div>
-                <span class="activity-time">Hier</span>
-            </li>
-            <li class="activity-item">
-                <div class="activity-icon blue">
-                    <i class="fas fa-vial"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>Nouveaux échantillons</h4>
-                    <p>15 nouveaux échantillons ont été ajoutés à l'inventaire</p>
-                </div>
-                <span class="activity-time">Il y a 2 jours</span>
-            </li>
+            {% else %}
+            <li>Aucune donnée budgétaire à afficher.</li>
+            {% endfor %}
         </ul>
     </div>
 </div>

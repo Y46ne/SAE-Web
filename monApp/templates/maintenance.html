@@ -1,54 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Gestion de la Maintenance{% endblock %}
+{% block title %}Gestion des Maintenances{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/maintenance.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/maintenance.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="page-title">
-    <h1>Gestion de la Maintenance</h1>
-    <p>Bienvenue, userName - userRole</p>
-</div>
-
-<div class="card filter-card">
-    <form method="GET" action="/maintenance" class="filter-form">
-        <div class="filter-group">
-            <label for="platform">Filtrer par plateforme :</label>
-            <select id="platform" name="platform">
-                <option value="">Toutes les plateformes</option>
-                <option value="plateforme1">Plateforme 1</option>
-                <option value="plateforme2">Plateforme 2</option>
-                <option value="plateforme3">Plateforme 3</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <label for="status">Filtrer par statut :</label>
-            <select id="status" name="status">
-                <option value="">Tous les statuts</option>
-                <option value="prevue">Prévue</option>
-                <option value="terminee">Terminée</option>
-            </select>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-filter"></i> Filtrer
-        </button>
-    </form>
+    <h1>Gestion des Maintenances</h1>
+    <p>Planification et suivi des opérations de maintenance.</p>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title">Opérations de Maintenance</h2>
+        <h2 class="card-title">Maintenances programmées</h2>
+        <a href="{{ url_for('add_maintenance') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Programmer une maintenance</a>
     </div>
-    <div class="table-container">
-        <table>
+    <div class="table-responsive">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Plateforme</th>
-                    <th>Date Prévue</th>
+                    <th>Date de début</th>
+                    <th>Durée (jours)</th>
+                    <th>Opération</th>
                     <th>Statut</th>
                     <th>Actions</th>
                 </tr>
@@ -56,46 +32,26 @@
             <tbody>
                 {% for maintenance in maintenances %}
                 <tr>
-                    <td>{{ maintenance.plateforme }}</td>
-                    <td>{{ maintenance.date_prevue }}</td>
-                    <td><span class="badge badge-{{ maintenance.statut_class }}">{{ maintenance.statut }}</span></td>
-                    <td>
-                        <a href="/maintenance/edit/{{ maintenance.id }}" class="btn-action btn-edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="/maintenance/delete/{{ maintenance.id }}" class="btn-action btn-delete" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                    <td>{{ maintenance.plateforme.nom }}</td>
+                    <td>{{ maintenance.date_maintenance.strftime('%d/%m/%Y') }}</td>
+                    <td>{{ maintenance.duree }}</td>
+                    <td>{{ maintenance.type_operation }}</td>
+                    <td><span class="badge badge-{{ maintenance.statut_class }}">{{ maintenance.statut.value }}</span></td>
+                    <td class="actions">
+                        {% if maintenance.statut.value == 'Prévue' %}
+                        <form action="{{ url_for('validate_maintenance', maintenance_id=maintenance.idMaint) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i> Valider</button>
+                        </form>
+                        {% endif %}
                     </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">Aucune maintenance programmée.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</div>
-
-<div class="card form-card">
-    <div class="card-header">
-        <h2 class="card-title">Planifier une Maintenance</h2>
-    </div>
-    <form method="POST" action="/maintenance/add" class="personnel-form">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="platform_select">Plateforme</label>
-                <select id="platform_select" name="platform" required>
-                    <option value="plateforme1">Plateforme 1</option>
-                    <option value="plateforme2">Plateforme 2</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="date_prevue">Date Prévue</label>
-                <input type="date" id="date_prevue" name="date_prevue" required>
-            </div>
-            
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-plus"></i> Ajouter
-            </button>
-        </div>
-    </form>
 </div>
 {% endblock %}

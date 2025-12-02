@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, DecimalField, DateField, TextAreaField, SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, EqualTo, Length, ValidationError, NumberRange, Optional
+from flask_wtf.file import FileField, FileRequired
 from .models import User
 
 
@@ -16,6 +17,10 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField(
         'Confirmer le mot de passe', 
         validators=[DataRequired(), EqualTo('password')]
+    )
+    role = SelectField(
+        'Rôle',
+        validators=[DataRequired()]
     )
     submit = SubmitField('Créer le compte')
 
@@ -68,26 +73,27 @@ class PersonnelForm(FlaskForm):
 
 
 class CampagneForm(FlaskForm):
+    nom = StringField('Nom de la Campagne', validators=[DataRequired()])
     date_debut = DateField('Date de début', format='%Y-%m-%d', validators=[DataRequired()])
     duree = IntegerField('Durée (jours)', validators=[DataRequired(), NumberRange(min=1, max=365)])
     lieu = StringField('Lieu', validators=[DataRequired()])
     
-    plateforme = SelectField(
+    plateforme = SelectField( # On garde SelectField, mais on va gérer la validation différemment
         'Plateforme',
-        coerce=int,
-        validators=[DataRequired()]
+        validators=[DataRequired(message="Veuillez sélectionner une plateforme.")],
+        coerce=int
     )
 
     personnel_implique = SelectMultipleField(
         'Personnel impliqué',
         coerce=int,
-        validators=[Optional()]
+        validators=[DataRequired(message="Veuillez sélectionner au moins un membre du personnel.")]
     )
     submit = SubmitField('Enregistrer')
 
 
 class EchantillonForm(FlaskForm):
-    fichier_sequence = StringField('Fichier séquence', validators=[DataRequired()])
+    fichier_sequence = FileField('Fichier séquence', validators=[FileRequired(message="Veuillez sélectionner un fichier.")])
     commentaire = TextAreaField('Commentaire')
     
     campagne = SelectField(
