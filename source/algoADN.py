@@ -1,6 +1,6 @@
 import random
-from constantes import *
 
+bases = ["A","T","C","G"]
 
 def generer_sequence_adn_aleatoire(longueur: int):
     """Génère une séquence ADN aléatoire d'une longueur spécifiée.
@@ -57,17 +57,22 @@ def muter_complet(sequence, p_remplacement, p_insertion, p_delation):
     Returns:
         str: Séquence mutée.
     """
-    sequence_mutée = "" 
+    sequence_mutée_liste = []
     for base in sequence:
-        if random.random() < p_delation:
-            continue
+        # 1. Insertion : une nouvelle base peut être ajoutée avant la base actuelle
         if random.random() < p_insertion:
-            sequence_mutée += random.choice(bases)
+            sequence_mutée_liste.append(random.choice(bases))
+
+        # 2. Délétion : la base actuelle peut être supprimée
+        if random.random() < p_delation:
+            continue  # On passe à la base suivante sans rien ajouter
+
+        # 3. Remplacement : la base actuelle peut être remplacée
         if random.random() < p_remplacement:
-            nouvelles_bases = []
-            for b in bases:
-                if b != base:
-                    nouvelles_bases.append(b)
-            base = random.choice(nouvelles_bases)
-        sequence_mutée += base
-    return sequence_mutée
+            nouvelles_bases = [b for b in bases if b != base]
+            sequence_mutée_liste.append(random.choice(nouvelles_bases))
+        else:
+            # Si pas de remplacement, on ajoute la base originale
+            sequence_mutée_liste.append(base)
+            
+    return "".join(sequence_mutée_liste)

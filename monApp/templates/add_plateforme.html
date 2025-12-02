@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un équipement{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Ajouter un équipement</h1>
+    <p>Enregistrer un nouvel équipement dans la plateforme technique.</p>
+</div>
+
+<div class="card form-card">
+    <div class="card-header">
+        <h2 class="card-title">Nouvel équipement</h2>
+    </div>
+    <form method="POST" action="{{ url_for('add_plateforme') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.nom.label(for="nom") }}
+            {{ form.nom(id="nom", placeholder="Ex: Séquenceur ADN Pro", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.nb_personnes_necessaires.label(for="nb_personnes_necessaires") }}
+            {{ form.nb_personnes_necessaires(id="nb_personnes_necessaires", min="1", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.cout_journalier.label(for="cout_journalier") }}
+            {{ form.cout_journalier(id="cout_journalier", min="0", step="0.01", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.intervalle_maintenance.label(for="intervalle_maintenance") }}
+            {{ form.intervalle_maintenance(id="intervalle_maintenance", min="1", required=True) }}
+        </div>
+        <div class="form-group">
+            <label>Habilitations requises</label>
+            <div class="checkbox-grid">
+                {% for subfield in form.habilitations_requises %}
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="{{ subfield.id }}" name="{{ subfield.name }}" value="{{ subfield.data }}">
+                        <label for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-plus"></i> Ajouter l'équipement
+            </button>
+            <a href="{{ url_for('plateforme') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

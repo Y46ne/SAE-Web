@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Analyse ADN{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analyse.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Analyse de Séquences ADN</h1>
+    <p>Outils pour la manipulation et l'analyse de séquences génétiques.</p>
+</div>
+
+<div class="analysis-grid">
+
+    <!-- Génération de séquence -->
+    <div class="card">
+        <h2 class="card-title">Générer une Séquence Aléatoire</h2>
+        <form method="POST" action="{{ url_for('analyse_generate') }}">
+            <div class="form-group">
+                <label for="length">Longueur de la séquence</label>
+                <input type="number" id="length" name="length" placeholder="Ex: 150" required>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-random"></i> Générer</button>
+        </form>
+        {% if generated_sequence %}
+        <div class="result">
+            <strong>Séquence Générée :</strong>
+            <pre>{{ generated_sequence }}</pre>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Mutation de séquence -->
+    <div class="card">
+        <h2 class="card-title">Muter une Séquence</h2>
+        <form method="POST" action="{{ url_for('analyse_mutate') }}">
+            <div class="form-group">
+                <label for="sequence_to_mutate">Séquence à muter</label>
+                <textarea id="sequence_to_mutate" name="sequence_to_mutate" rows="3" placeholder="Entrez une séquence ADN..." required>{{ original_for_mutation or '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="mutation_rate">Taux de mutation</label>
+                <input type="text" id="mutation_rate" name="mutation_rate" value="0.1" placeholder="Ex: 0.1" required>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-exchange-alt"></i> Muter</button>
+        </form>
+        {% if mutated_sequence %}
+        <div class="result">
+            <strong>Séquence Mutée :</strong>
+            <pre>{{ mutated_sequence }}</pre>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Distance de Levenshtein -->
+    <div class="card">
+        <h2 class="card-title">Distance de Levenshtein</h2>
+        <form method="POST" action="{{ url_for('analyse_levenshtein') }}">
+            <div class="form-group">
+                <label for="seq1">Séquence 1</label>
+                <textarea id="seq1" name="seq1" rows="2" required>{{ seq1_lev or '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="seq2">Séquence 2</label>
+                <textarea id="seq2" name="seq2" rows="2" required>{{ seq2_lev or '' }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-ruler-horizontal"></i> Calculer</button>
+        </form>
+        {% if distance is defined and distance is not none %}
+        <div class="result">
+            <strong>Distance calculée :</strong>
+            <pre>{{ distance }}</pre>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Arbre phylogénétique -->
+    <div class="card">
+        <h2 class="card-title">Construire un Arbre Phylogénétique</h2>
+        <form method="POST" action="{{ url_for('analyse_tree') }}">
+            <div class="form-group">
+                <label for="sequences_tree">Séquences (une par ligne)</label>
+                <textarea id="sequences_tree" name="sequences_tree" rows="5" placeholder="Entrez au moins deux séquences..." required>{{ original_sequences_tree or '' }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-project-diagram"></i> Construire</button>
+        </form>
+        {% if newick_tree %}
+        <div class="result">
+            <strong>Arbre (format Newick) :</strong>
+            <pre>{{ newick_tree }}</pre>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Simple script to scroll to the result card if it exists
+    const result = document.querySelector('.result');
+    if (result) {
+        result.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
+</script>
+{% endblock %}

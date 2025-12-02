@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/base.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-chart-line"></i> Mon Application</h2>
+        </div>
+        <nav>
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('tableau_de_bord') }}" class="{{ 'active' if 'tableau_de_bord' in request.endpoint else '' }}"><i class="fas fa-home"></i> Tableau de bord</a></li>
+                {% if current_user.role.value in ['chercheur', 'admin'] %}
+                    <li><a href="{{ url_for('campagnes') }}" class="{{ 'active' if 'campagnes' in request.endpoint else '' }}"><i class="fas fa-bullhorn"></i> Campagnes</a></li>
+                {% endif %}
+                {% if current_user.role.value == 'admin' %}
+                    <li><a href="{{ url_for('personnel') }}" class="{{ 'active' if 'personnel' in request.endpoint else '' }}"><i class="fas fa-users"></i> Personnel</a></li>
+                {% endif %}
+                {% if current_user.role.value in ['admin', 'technique'] %}
+                    <li><a href="{{ url_for('plateforme') }}" class="{{ 'active' if 'plateforme' in request.endpoint else '' }}"><i class="fas fa-cogs"></i> Plateformes</a></li>
+                    <li><a href="{{ url_for('maintenance') }}" class="{{ 'active' if 'maintenance' in request.endpoint else '' }}"><i class="fas fa-wrench"></i> Maintenance</a></li>
+                {% endif %}
+                {% if current_user.role.value in ['chercheur', 'admin'] %}
+                    <li><a href="{{ url_for('sequences_adn') }}" class="{{ 'active' if 'sequences_adn' in request.endpoint else '' }}"><i class="fas fa-dna"></i> Échantillons</a></li>
+                    <li><a href="{{ url_for('analyse') }}" class="{{ 'active' if 'analyse' in request.endpoint else '' }}"><i class="fas fa-chart-bar"></i> Analyse ADN</a></li>
+                {% endif %}
+                {% if current_user.role.value in ['direction', 'admin'] %}
+                    <li><a href="{{ url_for('budget') }}" class="{{ 'active' if 'budget' in request.endpoint else '' }}"><i class="fas fa-wallet"></i> Budgets</a></li>
+                {% endif %}
+                {% if current_user.role.value in ['direction', 'admin'] %}
+                    <li><a href="{{ url_for('creer_compte') }}" class="{{ 'active' if 'creer_compte' in request.endpoint else '' }}"><i class="fas fa-user-plus"></i> Créer un utilisateur</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="header-left">
+                <button class="btn-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">UN</div>
+                <div class="user-details">
+                    <span class="user-name">{{ current_user.username }}</span>
+                    <span class="user-role">{{ current_user.role.value|capitalize }}</span>
+                </div>
+                <a href="{{ url_for('logout') }}" class="btn-logout" title="Déconnexion">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </header>
+
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

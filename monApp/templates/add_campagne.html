@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Planifier une Campagne{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Planifier une Nouvelle Campagne</h1>
+    <p>Organiser une nouvelle campagne de fouilles.</p>
+</div>
+
+<div class="card form-card">
+    <div class="card-header">
+        <h2 class="card-title">Détails de la campagne</h2>
+    </div>
+    <form method="POST" action="{{ url_for('add_campagne') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.nom.label(for="nom") }}
+            {{ form.nom(id="nom", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.lieu.label(for="lieu") }}
+            {{ form.lieu(id="lieu", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.date_debut.label(for="date_debut") }}
+            {{ form.date_debut(id="date_debut", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.duree.label(for="duree") }}
+            {{ form.duree(id="duree", min="1", required=True) }}
+        </div>
+        <div class="form-group">
+            {{ form.plateforme.label(for="plateforme") }}
+            {{ form.plateforme(id="plateforme", class="form-control") }}
+        </div>
+        <div class="form-group" id="personnel-group">
+            {{ form.personnel_implique.label(for="personnel_implique") }}
+            <div class="checkbox-grid" id="personnel-checkboxes">
+                {% for subfield in form.personnel_implique %}
+                    <div class="checkbox-item">
+                        {{ subfield(class="form-check-input") }}
+                        <label for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-plus"></i> Planifier la campagne
+            </button>
+            <a href="{{ url_for('campagnes') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const plateformeSelect = document.getElementById('plateforme');
+    const personnelCheckboxesDiv = document.getElementById('personnel-checkboxes');
+
+    plateformeSelect.addEventListener('change', function() {
+        const plateformeId = this.value;
+        personnelCheckboxesDiv.innerHTML = '<p>Chargement du personnel qualifié...</p>';
+
+        if (!plateformeId) {
+            personnelCheckboxesDiv.innerHTML = '<p class="text-muted">Veuillez d\'abord sélectionner une plateforme.</p>';
+            return;
+        }
+
+        fetch(`/api/personnel_for_plateforme/${plateformeId}`)
+            .then(response => response.json())
+            .then(data => {
+                personnelCheckboxesDiv.innerHTML = '';
+                if (data.length > 0) {
+                    data.forEach(personnel => {
+                        const checkboxDiv = document.createElement('div');
+                        checkboxDiv.className = 'checkbox-item';
+                        checkboxDiv.innerHTML = `
+                            <input type="checkbox" class="form-check-input" id="personnel-${personnel.id}" name="personnel_implique" value="${personnel.id}">
+                            <label for="personnel-${personnel.id}">${personnel.nom}</label>
+                        `;
+                        personnelCheckboxesDiv.appendChild(checkboxDiv);
+                    });
+                } else {
+                    personnelCheckboxesDiv.innerHTML = '<p class="text-danger">Aucun membre du personnel ne possède toutes les habilitations requises pour cette plateforme.</p>';
+                }
+            })
+            .catch(error => console.error('Erreur lors de la récupération du personnel:', error));
+    });
+});
+</script>
+{% endblock %}

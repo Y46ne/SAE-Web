@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Maintenances{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/maintenance.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Gestion des Maintenances</h1>
+    <p>Planification et suivi des opérations de maintenance.</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Maintenances programmées</h2>
+        <a href="{{ url_for('add_maintenance') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Programmer une maintenance</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Plateforme</th>
+                    <th>Date de début</th>
+                    <th>Durée (jours)</th>
+                    <th>Opération</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for maintenance in maintenances %}
+                <tr>
+                    <td>{{ maintenance.plateforme.nom }}</td>
+                    <td>{{ maintenance.date_maintenance.strftime('%d/%m/%Y') }}</td>
+                    <td>{{ maintenance.duree }}</td>
+                    <td>{{ maintenance.type_operation }}</td>
+                    <td><span class="badge badge-{{ maintenance.statut_class }}">{{ maintenance.statut.value }}</span></td>
+                    <td class="actions">
+                        {% if maintenance.statut.value == 'Prévue' %}
+                        <form action="{{ url_for('validate_maintenance', maintenance_id=maintenance.idMaint) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i> Valider</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">Aucune maintenance programmée.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

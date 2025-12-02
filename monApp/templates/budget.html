@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion du Budget{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/budget.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Gestion du Budget</h1>
+    <p>Consultez et ajoutez des allocations budgétaires mensuelles.</p>
+</div>
+
+<div class="content-grid" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Historique des Budgets</h2>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mois</th>
+                        <th>Montant Alloué</th>
+                        <th>Dépenses</th>
+                        <th>Solde</th>
+                        <th style="width: 15%;">Utilisation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for budget in budgets %}
+                    {% set percentage = (budget.cout_total_campagnes / budget.montant * 100) if budget.montant > 0 else 0 %}
+                    {% set bar_class = 'bg-success' %}
+                    {% if percentage > 80 %}{% set bar_class = 'bg-warning' %}{% endif %}
+                    {% if percentage > 100 %}{% set bar_class = 'bg-danger' %}{% endif %}
+                    <tr>
+                        <td>{{ budget.mois.strftime('%B %Y') }}</td>
+                        <td>{{ "%.2f"|format(budget.montant) }} €</td>
+                        <td>{{ "%.2f"|format(budget.cout_total_campagnes) }} €</td>
+                        <td>{{ "%.2f"|format(budget.montant - budget.cout_total_campagnes) }} €</td>
+                        <td>
+                            <div class="budget-item" style="padding: 0;">
+                                <div class="progress-bar-container" style="margin-bottom: 0.25rem;">
+                                    <div class="progress-bar {{ bar_class }}" style="width: {{ [percentage, 100]|min }}%;"></div>
+                                </div>
+                                <span style="font-size: 0.8rem; color: #666;">
+                                    {{ "%.1f"|format(percentage) }}%
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3">Aucun budget enregistré.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card form-card">
+        <h2 class="card-title">Ajouter un Budget</h2>
+        <form method="POST" action="{{ url_for('budget') }}">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.mois.label }}
+                {{ form.mois(placeholder='AAAA-MM-JJ') }}
+            </div>
+            <div class="form-group">
+                {{ form.montant.label }}
+                {{ form.montant(placeholder='Ex: 50000') }}
+            </div>
+            {{ form.submit(class='btn btn-success', value='Ajouter le Budget') }}
+        </form>
+    </div>
+</div>
+{% endblock %}

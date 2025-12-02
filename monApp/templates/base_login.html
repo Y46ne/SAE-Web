@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block head_meta %}{% endblock %}
+
+    <title>{% block title %}{% endblock %} | Le Parc du Jurassique</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+            <i class="fas fa-dna"></i>
+            Le Parc du Jurassique
+        </a>
+    </nav>
+
+    <main class="main-container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

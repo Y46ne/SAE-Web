@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion du personnel{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/personnel.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Gestion du personnel</h1>
+    <p>Gérer les membres de l'équipe et leurs habilitations.</p>
+</div>
+
+<div class="card filter-card">
+    <form method="GET" action="/personnel" class="filter-form">
+        <div class="filter-group">
+            <label for="search">Recherche par nom :</label>
+            <input type="text" id="search" name="search" placeholder="Entrez un nom...">
+        </div>
+        
+        <div class="filter-group">
+            <label for="habilitation">Filtrer par habilitation :</label>
+            <select id="habilitation" name="habilitation">
+                <option value="">Toutes les habilitations</option>
+                <option value="electrique">Électrique</option>
+                <option value="chimique">Chimique</option>
+                <option value="biologie">Biologie</option>
+                <option value="radiations">Radiations</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-filter"></i> Filtrer
+        </button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Liste du personnel</h2>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Habilitations</th>
+                    <th>Disponibilité</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for personne in personnel_list %}
+                <tr>
+                    <td>{{ personne.nom }}</td>
+                    <td>
+                        {% for hab in personne.habilitations %}
+                        <span class="badge badge-habilitation">{{ hab.nomHab }}</span>
+                        {% else %}
+                        <span class="text-muted">Aucune</span>
+                        {% endfor %}
+                    </td>
+                    <td><span class="badge badge-success">Disponible</span></td> {# Logique de dispo à implémenter #}
+                    <td>
+                        <a href="{{ url_for('edit_personnel', personnel_id=personne.idPers) }}" class="btn-action btn-edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ url_for('delete_personnel', personnel_id=personne.idPers) }}" class="btn-action btn-delete" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-header">
+        <h2 class="card-title">Ajouter une personne</h2>
+    </div>
+    <form method="POST" action="{{ url_for('personnel') }}" class="personnel-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nom">Nom / prénom</label>
+                <input type="text" id="nom" name="nom" placeholder="Nom complet" required>
+            </div>
+            
+            <div class="form-group habilitation-group">
+                <label>Habilitation</label>
+                <div class="checkbox-grid">
+                    {% for hab in all_habilitations %}
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hab-{{ hab.idHab }}" name="habilitation" value="{{ hab.idHab }}">
+                        <label for="hab-{{ hab.idHab }}">{{ hab.nomHab }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-plus"></i> Ajouter
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

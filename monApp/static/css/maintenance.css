@@ -1,0 +1,211 @@
+/* ===================================
+   Main Layout & Typography
+====================================== */
+
+:root {
+    --primary-color: #3498db;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --light-grey-color: #f8f9fa;
+    --medium-grey-color: #e9ecef;
+    --dark-grey-color: #6c757d;
+    --text-color: #343a40;
+    --card-bg: #ffffff;
+    --card-border-color: #dee2e6;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.page-title {
+    margin-bottom: 2rem;
+}
+
+.page-title h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.page-title p {
+    font-size: 1rem;
+    color: var(--dark-grey-color);
+}
+
+
+/* ===================================
+   Card Styling
+====================================== */
+
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    overflow: hidden; /* Ensures child elements respect border-radius */
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--light-grey-color);
+    border-bottom: 1px solid var(--card-border-color);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-color);
+}
+
+
+/* ===================================
+   Table Styling
+====================================== */
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-color);
+}
+
+.table thead {
+    background-color: var(--light-grey-color);
+}
+
+.table th,
+.table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    vertical-align: middle;
+    border-top: 1px solid var(--card-border-color);
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--dark-grey-color);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table tbody tr:first-child td {
+    border-top: none;
+}
+
+.text-center {
+    text-align: center;
+    color: var(--dark-grey-color);
+    padding: 2rem;
+}
+
+
+/* ===================================
+   Badge Styling (for status)
+====================================== */
+
+.badge {
+    display: inline-block;
+    padding: 0.4em 0.7em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 12px;
+    color: #fff;
+}
+
+.badge-primary {
+    background-color: var(--primary-color);
+}
+
+.badge-success {
+    background-color: var(--success-color);
+}
+
+.badge-danger {
+    background-color: var(--danger-color);
+}
+
+
+/* ===================================
+   Button Styling
+====================================== */
+/* Assuming base .btn styles might be in base.css, but defining here to be sure */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9; /* Darker blue */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #27ae60; /* Darker green */
+}
+
+.btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+}
+
+td.actions {
+    text-align: right;
+}
+
+td.actions .btn {
+    margin-left: 0.5rem;
+}
+
+/* ===================================
+   Responsive adjustments
+====================================== */
+
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.75rem;
+    }
+}

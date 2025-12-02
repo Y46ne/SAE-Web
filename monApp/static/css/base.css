@@ -1,0 +1,201 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #ddd;
+    padding: 20px 0;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 0 20px 15px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.sidebar-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #444;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 15px 0;
+}
+
+.sidebar-menu li {
+    margin: 5px 0;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #666;
+    transition: background 0.2s;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    background: #e9e9e9;
+    color: #222;
+}
+
+.sidebar-menu a.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 4px;
+    top: 0;
+    bottom: 0;
+    background: #5677ff;
+}
+
+.sidebar-menu i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.main-content {
+    margin-left: 240px;
+    min-height: 100vh;
+}
+
+.header {
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #5677ff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.user-details span {
+    display: block;
+    font-size: 13px;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #222;
+}
+
+.user-role {
+    color: #666;
+}
+
+.container {
+    padding: 20px;
+}
+
+.page-title {
+    margin-bottom: 20px;
+}
+
+.page-title h1 {
+    font-size: 24px;
+    margin-bottom: 3px;
+    color: #222;
+}
+
+.page-title p {
+    color: #777;
+}
+
+.btn {
+    padding: 8px 14px;
+    border-radius: 4px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: #5677ff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #4866db;
+}
+
+.btn-menu {
+    background: none;
+    border: none;
+    color: #333;
+    display: none;
+    font-size: 20px;
+}
+
+.flash-messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}

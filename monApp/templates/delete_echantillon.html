@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmer la suppression{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Confirmer la suppression</h1>
+    <p>Cette action est irréversible.</p>
+</div>
+
+<div class="card form-card">
+    <div class="card-header">
+        <h2 class="card-title">Suppression de l'échantillon #{{ echantillon.idEch }}</h2>
+    </div>
+    <p style="margin-bottom: 20px;">
+        Êtes-vous sûr de vouloir supprimer définitivement l'échantillon <strong>{{ echantillon.fichier_sequence }}</strong> ? Le fichier associé sera également supprimé.
+    </p>
+    <form method="POST" action="{{ url_for('delete_echantillon', echantillon_id=echantillon.idEch) }}">
+        <div class="form-actions">
+            <a href="{{ url_for('sequences_adn') }}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Confirmer la suppression</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

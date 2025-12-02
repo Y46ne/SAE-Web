@@ -1,0 +1,35 @@
+{% extends 'base_login.html' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>
+        <i class="fas fa-sign-in-alt"></i> Connexion
+    </h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.username.label }}
+            {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+            {% for error in form.username.errors %}<span class="error-message">{{ error }}</span>{% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+            {% for error in form.password.errors %}<span class="error-message">{{ error }}</span>{% endfor %}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+    <p class="form-footer">Pas encore de compte ? <a href="{{ url_for('creer_compte') }}">Créez-en un ici</a>.</p>
+</div>
+{% endblock %}
