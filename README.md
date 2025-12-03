@@ -50,6 +50,14 @@ Suivez ces étapes pour exécuter l'application sur votre machine :
 ### Lancer les tests
 Le projet contient des tests unitaires et de performance pour les algorithmes d'analyse ADN (Levenshtein, Arbres Phylogénétiques).
 
+* **Tests de l'application :**
+     ```bash
+    coverage run -m pytest
+    ```
+     ```bash
+    coverage report -m
+    ``` 
+
 * **Tests de similarité :**
     ```bash
     pytest source/test_calcul_similarite.py
