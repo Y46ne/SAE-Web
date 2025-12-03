@@ -9,10 +9,10 @@ Cette application web a été développée dans le cadre de la SAE 3.01. Elle es
 
 | Rôle | Identifiant (Username) | Mot de passe |
 | :--- | :--- | :--- | :--- |
-| **Administrateur** | `admin` | `password`
-| **Direction** | `direction` | `password`
-| **Technique** | `technique` | `password`
-| **Chercheur** | `chercheur` | `password`
+-| **Administrateur** | `admin` | `password`
+-| **Direction** | `direction` | `password`
+-| **Technique** | `technique` | `password`
+-| **Chercheur** | `chercheur` | `password`
 
 ### Installation et Lancement
 Suivez ces étapes pour exécuter l'application sur votre machine :
