@@ -2,7 +2,7 @@
 
 **Contributeurs :** Yassine Belaarous, Ilane Riotte, Corentin Lacoume et Clément Vignon Chaudey
 
-## 🦕 Présentation
+## Présentation
 Cette application web a été développée dans le cadre de la SAE 3.01. Elle est destinée à la gestion d'un laboratoire de paléontologie de l'Université d'Orléans. Elle permet de centraliser la gestion des campagnes de fouilles, du matériel technique, du personnel habilité, ainsi que l'analyse algorithmique des échantillons ADN collectés.
 
 ### Installation et Lancement
